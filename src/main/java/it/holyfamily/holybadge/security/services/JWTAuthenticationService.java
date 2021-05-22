@@ -28,8 +28,10 @@ public class JWTAuthenticationService implements UserAuthenticationService {
 
         log.info("THIS IS JWTAUTHSERVICE");
 
+        // Questo metodo è per la sola chiamata di login (che è pubblica) e non prevede un'autenticazione via token
+        // la sola autenticazione è di username e password, poi genera il token che verrà utilizzato nelle chimate successive
         return userService
-                .getByUsername(username)
+                .getByUserName(username)
                 .filter(user -> Objects.equals(password, user.getPassword()))
                 .map(user -> jwtService.create(user.getId(), user.getRole()))
                 .orElseThrow(() -> new BadCredentialsException("Invalid username or password."));
@@ -38,10 +40,11 @@ public class JWTAuthenticationService implements UserAuthenticationService {
     @Override
     public User authenticateByToken(String token) {
         try {
-            Object username = jwtService.verify(token).get("username");
-            return Optional.ofNullable(username)
-                    .flatMap(name -> userService.getByUsername(String.valueOf(name)))
-                    .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found."));
+            // una volta che la signature del token viene verificata prende lo userID
+            Object userid = jwtService.verify(token).get("userid");
+            return Optional.ofNullable(userid)
+                    .flatMap(user -> userService.getByUserID((Integer) userid))
+                    .orElseThrow(() -> new UsernameNotFoundException("User '" + userid + "' not found."));
         } catch (TokenVerificationException e) {
             throw new BadCredentialsException("Invalid JWT token.", e);
         }

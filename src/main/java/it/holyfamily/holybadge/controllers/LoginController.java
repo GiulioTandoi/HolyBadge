@@ -1,6 +1,6 @@
 package it.holyfamily.holybadge.controllers;
 
-import it.holyfamily.holybadge.pojos.LoginPojo;
+import it.holyfamily.holybadge.pojos.UserCredentialsPojo;
 import it.holyfamily.holybadge.security.services.UserAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,7 +19,7 @@ public class LoginController {
 
     @RequestMapping(value = "/holybadge/authenticate",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> getUser(@RequestBody LoginPojo formBody) {
+    public ResponseEntity<Object> getUser(@RequestBody UserCredentialsPojo formBody) {
 
         System.out.println("I'M LOGIN CONTROLLER");
         try{

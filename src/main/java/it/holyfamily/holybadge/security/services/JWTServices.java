@@ -28,16 +28,18 @@ class JWTService {
 
     }
 
-    // Crea un token con data di creazione, durata e richiede lo username (lo aggiunge come claim nel contenuto del token),
+    // Crea un token con data di creazione, durata e richiede lo userid e il ruolo (li aggiunge come claim nel contenuto del token),
     // utilizza l'algoritmo HMAC256 per generare la signature del token
     public String create(int userId, String role) {
         Instant issuedAt = Instant.now();
 
-        // la composizione
+        // la composizione del token quindi sarà: un header criptato in base64, un payload contenente i dati (userid, role, issuead at e expiration) in base64 e una
+        // signature generata a partire da un jwt.secret che servirà per validare le chiamate, quando legge la signature del token la decodifica (vedi metodo
+        // verify di questa classe)
         return JWT.create()
                 .withIssuedAt(Date.from(issuedAt))
                 .withExpiresAt(Date.from(issuedAt.plusSeconds(defaultExpiration)))
-                .withClaim("username", userId)
+                .withClaim("userid", userId)
                 .withClaim("role", role)
                 .sign(algorithm);
     }

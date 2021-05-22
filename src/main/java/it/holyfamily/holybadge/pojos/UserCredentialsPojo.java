@@ -1,6 +1,6 @@
 package it.holyfamily.holybadge.pojos;
 
-public class LoginPojo {
+public class UserCredentialsPojo {
 
     private String username;
     private String password;

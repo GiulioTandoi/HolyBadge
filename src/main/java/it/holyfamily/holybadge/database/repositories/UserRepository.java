@@ -9,6 +9,7 @@ import java.util.Optional;
 @Repository(value = "it.holyfamily.holybadge.database.repositories.UserRepository")
 public interface UserRepository extends CrudRepository<User, Integer> {
 
-    Optional<User> findByUsername(String username);
+    Optional<User> findById(int userId);
 
+    Optional<User> findByUsername(String username);
 }

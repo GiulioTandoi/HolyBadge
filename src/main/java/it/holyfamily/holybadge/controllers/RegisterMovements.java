@@ -1,0 +1,64 @@
+package it.holyfamily.holybadge.controllers;
+
+import it.holyfamily.holybadge.entities.User;
+import it.holyfamily.holybadge.security.services.UserAuthenticationService;
+import it.holyfamily.holybadge.structuralservices.ParishionerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.logging.Logger;
+
+@RestController
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowedHeaders = "*")
+public class RegisterMovements {
+
+    private static final Logger log = Logger.getLogger(RegisterMovements.class.getName());
+
+    @Qualifier("JWTAuthenticationService")
+    @Autowired
+    UserAuthenticationService userAuthService;
+
+    ParishionerService parishionerService = new ParishionerService();
+
+    @GetMapping("/holybadge/registerEntrance")
+    public ResponseEntity<Object> registerEntranceInParish(@RequestParam String token){
+        User userAuthenticated;
+        try{
+            userAuthenticated = userAuthService.authenticateByToken(token);
+        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+            log.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
+        }
+
+        if(parishionerService.registerEntrance(userAuthenticated.getId(), LocalDateTime.now())){
+            return new ResponseEntity<>("REGISTRAZIONE MOVIMENTO EFFETTUATA", HttpStatus.CREATED);
+        }else {
+            return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO" , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping("/holybadge/registerExit")
+    public ResponseEntity<Object> registerExitFromParish (@RequestParam String token){
+        User userAuthenticated;
+        try{
+            userAuthenticated = userAuthService.authenticateByToken(token);
+        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+            log.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
+        }
+
+        if(parishionerService.registeExit(userAuthenticated.getId(), LocalDateTime.now())){
+            return new ResponseEntity<>("REGISTRAZIONE MOVIMENTO EFFETTUATA", HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO" , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+}

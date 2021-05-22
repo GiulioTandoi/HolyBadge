@@ -19,7 +19,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Optional<User> getByUsername(String username) {
+    public Optional<User> getByUserID(int userId) {
+        return userRepository.findById(userId);
+    }
+
+    public Optional<User> getByUserName(String username) {
         return userRepository.findByUsername(username);
     }
 }
