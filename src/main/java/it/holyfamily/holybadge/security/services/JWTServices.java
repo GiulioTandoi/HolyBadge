@@ -18,6 +18,8 @@ class JWTService {
     private Algorithm algorithm;
     private int defaultExpiration;
 
+    // il jwt.secret è la chiave che serve per generare la signature criptata che viene inserita nel token in modo che ogni volta che il middleware riceve una
+    // chiamata API con quel token legge la signature e valida il token facendo proiseguire la chimata
     public JWTService(
             @Value("jwt.secret") String secret,
             @Value("${jwt.defaultExpirationMillis}") int defaultExpirationMillis) {
@@ -26,13 +28,17 @@ class JWTService {
 
     }
 
-    // Crea un token con data di creazione, durata e richiede lo username (lo aggiunge come claim nel contenuto del token), utilizza l'algoritmo HMAC256 per generare il token
-    public String create(String username) {
+    // Crea un token con data di creazione, durata e richiede lo username (lo aggiunge come claim nel contenuto del token),
+    // utilizza l'algoritmo HMAC256 per generare la signature del token
+    public String create(int userId, String role) {
         Instant issuedAt = Instant.now();
+
+        // la composizione
         return JWT.create()
                 .withIssuedAt(Date.from(issuedAt))
                 .withExpiresAt(Date.from(issuedAt.plusSeconds(defaultExpiration)))
-                .withClaim("username", username)
+                .withClaim("username", userId)
+                .withClaim("role", role)
                 .sign(algorithm);
     }
 

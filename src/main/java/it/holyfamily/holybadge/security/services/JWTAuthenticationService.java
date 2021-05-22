@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class JWTAuthenticationService implements UserAuthenticationService {
@@ -18,14 +19,19 @@ public class JWTAuthenticationService implements UserAuthenticationService {
     @Autowired
     private UserService userService;
 
+    private static final Logger log = Logger.getLogger(JWTAuthenticationService.class.getName());
+
     // metodo utilizzato nella chiamata di login da controller, crea il token in base allo username e alla password passati.
     // il token che restituisce è quello creato dal metodo create(), altrimenti torna una exception
     @Override
     public String login(String username, String password) throws BadCredentialsException {
+
+        log.info("THIS IS JWTAUTHSERVICE");
+
         return userService
                 .getByUsername(username)
                 .filter(user -> Objects.equals(password, user.getPassword()))
-                .map(user -> jwtService.create(username))
+                .map(user -> jwtService.create(user.getId(), user.getRole()))
                 .orElseThrow(() -> new BadCredentialsException("Invalid username or password."));
     }
 

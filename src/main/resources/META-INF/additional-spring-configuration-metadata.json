@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "jwt.defaultExpirationMillis",
+      "type": "java.lang.String",
+      "description": "Description for jwt.defaultExpirationMillis."
+  }
+] }

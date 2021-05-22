@@ -17,10 +17,11 @@ public class LoginController {
     @Autowired
     UserAuthenticationService userAuthService;
 
-    @RequestMapping(value = "/holybadge/authenticate",method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/holybadge/authenticate",method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getUser(@RequestBody LoginPojo formBody) {
 
+        System.out.println("I'M LOGIN CONTROLLER");
         try{
             return new ResponseEntity<>(userAuthService.login(formBody.getUsername(), formBody.getPassword()), HttpStatus.OK);
         }catch (BadCredentialsException bce){
