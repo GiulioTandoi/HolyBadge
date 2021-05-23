@@ -9,8 +9,8 @@ public class Partecipation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private int idParishioner;
-    private int idMeeting;
+    private Integer idParishioner;
+    private Integer idMeeting;
 
     public Integer getId() {
         return id;

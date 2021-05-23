@@ -26,7 +26,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         // per un'ulteriore autenticazione.
         // Il processo entra in un ciclo che non finisce, provocando il verificarsi di ERR_TOO_MANY_REDIRECTS.
 
-        System.out.println("WEB SECURE CONFIGURATION");
         http
                 .csrf().disable()
                 .authorizeRequests()

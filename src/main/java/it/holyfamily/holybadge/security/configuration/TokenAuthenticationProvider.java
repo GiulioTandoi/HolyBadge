@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
-
 public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
     @Autowired
@@ -32,7 +31,7 @@ public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticati
                                 .map(u -> User.builder()
                                         .username(u.getUsername())
                                         .password(u.getPassword())
-                                        .roles("user")
+                                        .roles(u.getRole())
                                         .build()))
                 .orElseThrow(() -> new BadCredentialsException("Invalid authentication token=" + token));
     }

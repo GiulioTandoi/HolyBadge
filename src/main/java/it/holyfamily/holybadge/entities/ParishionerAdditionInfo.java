@@ -8,11 +8,20 @@ public class ParishionerAdditionInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String infoName;
     private String infoValue;
 
     public ParishionerAdditionInfo() {
+    }
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getInfoName() {

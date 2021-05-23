@@ -14,7 +14,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer";
 
-    protected TokenAuthenticationFilter(String defaultFilterProcessesUrl) {
+    public TokenAuthenticationFilter(String defaultFilterProcessesUrl) {
         super(defaultFilterProcessesUrl);
     }
 
@@ -25,10 +25,10 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
     public Authentication attemptAuthentication(
             HttpServletRequest request,
             HttpServletResponse response) {
-            // La voce Bearer è sempre presente nel campo Authentication delle chiamate tokenizzate e precede sempre il valore del Token
-            String token = Optional.ofNullable(request.getHeader(AUTHORIZATION))
-                .map(v -> v.replace(BEARER, "").trim())
-                .orElseThrow(() -> new BadCredentialsException("Missing authentication token."));
+        // La voce Bearer è sempre presente nel campo Authentication delle chiamate tokenizzate e precede sempre il valore del Token
+        String token = Optional.ofNullable(request.getHeader(AUTHORIZATION))
+            .map(v -> v.replace(BEARER, "").trim())
+            .orElseThrow(() -> new BadCredentialsException("Missing authentication token."));
 
         Authentication auth = new UsernamePasswordAuthenticationToken(token, token);
         return getAuthenticationManager().authenticate(auth);

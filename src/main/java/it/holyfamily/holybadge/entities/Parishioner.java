@@ -1,5 +1,7 @@
 package it.holyfamily.holybadge.entities;
 
+import com.sun.istack.Nullable;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,7 +13,11 @@ public class Parishioner {
     private Integer id;
     private String name;
     private String surname;
-    private int phoneNumber;
+    @Nullable
+    private Integer phoneNumber;
+
+    @Nullable
+    private String note;
 
     public Parishioner() {
     }
@@ -40,4 +46,12 @@ public class Parishioner {
         this.phoneNumber = phoneNumber;
     }
 
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 }

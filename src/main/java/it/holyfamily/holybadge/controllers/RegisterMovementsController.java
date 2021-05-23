@@ -1,6 +1,8 @@
 package it.holyfamily.holybadge.controllers;
 
 import it.holyfamily.holybadge.entities.User;
+import it.holyfamily.holybadge.security.configuration.TokenAuthenticationFilter;
+import it.holyfamily.holybadge.security.configuration.UserService;
 import it.holyfamily.holybadge.security.services.UserAuthenticationService;
 import it.holyfamily.holybadge.structuralservices.ParishionerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,26 +13,28 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowedHeaders = "*")
-public class RegisterMovements {
+public class RegisterMovementsController {
 
-    private static final Logger log = Logger.getLogger(RegisterMovements.class.getName());
+    private static final Logger log = Logger.getLogger(RegisterMovementsController.class.getName());
 
-    @Qualifier("JWTAuthenticationService")
     @Autowired
-    UserAuthenticationService userAuthService;
+    ParishionerService parishionerService;
 
-    ParishionerService parishionerService = new ParishionerService();
+    @Autowired
+    UserService userService;
 
     @GetMapping("/holybadge/registerEntrance")
-    public ResponseEntity<Object> registerEntranceInParish(@RequestParam String token){
+    public ResponseEntity<Object> registerEntranceInParish(HttpServletRequest request, HttpServletResponse response){
         User userAuthenticated;
         try{
-            userAuthenticated = userAuthService.authenticateByToken(token);
+            userAuthenticated = userService.authenticateCaller(request, response);
         }catch(UsernameNotFoundException | BadCredentialsException unfe){
             log.info("CHIAMATA NON AUTORIZZATA");
             return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
@@ -45,10 +49,10 @@ public class RegisterMovements {
     }
 
     @GetMapping("/holybadge/registerExit")
-    public ResponseEntity<Object> registerExitFromParish (@RequestParam String token){
+    public ResponseEntity<Object> registerExitFromParish (HttpServletRequest request, HttpServletResponse response){
         User userAuthenticated;
         try{
-            userAuthenticated = userAuthService.authenticateByToken(token);
+            userAuthenticated = userService.authenticateCaller(request, response);
         }catch(UsernameNotFoundException | BadCredentialsException unfe){
             log.info("CHIAMATA NON AUTORIZZATA");
             return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);

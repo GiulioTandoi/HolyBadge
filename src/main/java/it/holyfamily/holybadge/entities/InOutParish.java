@@ -12,7 +12,7 @@ public class InOutParish {
     private Integer id;
     private LocalDateTime entranceTime;
     private LocalDateTime exitTime;
-    private int idParishioner;
+    private Integer idParishioner;
 
     public InOutParish(LocalDateTime entranceTime, int idParishioner) {
 

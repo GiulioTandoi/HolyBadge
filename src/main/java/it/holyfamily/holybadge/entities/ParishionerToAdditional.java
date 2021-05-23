@@ -9,8 +9,8 @@ public class ParishionerToAdditional {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private int idParishioner;
-    private int idInfo;
+    private Integer idParishioner;
+    private Integer idInfo;
 
     public int getIdParishioner() {
         return idParishioner;

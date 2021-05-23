@@ -1,14 +1,19 @@
 package it.holyfamily.holybadge.structuralservices;
 
 import it.holyfamily.holybadge.database.repositories.InOutParishRepository;
+import it.holyfamily.holybadge.database.repositories.ParishionerRepository;
 import it.holyfamily.holybadge.entities.InOutParish;
+import it.holyfamily.holybadge.entities.Parishioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -19,6 +24,11 @@ public class ParishionerService {
     @Autowired
     @Qualifier("it.holyfamily.holybadge.database.repositories.InOutParishRepository")
     private InOutParishRepository inOutParishRepository;
+
+    @Autowired
+    @Qualifier("it.holyfamily.holybadge.database.repositories.ParishionerRepository")
+    private ParishionerRepository parishionerRepository;
+
 
     public boolean registerEntrance (int idParishioner, LocalDateTime entranceTime){
 
@@ -51,7 +61,38 @@ public class ParishionerService {
             return false;
         }
 
-        return false;
+        return true;
+    }
+
+    public List<HashMap<String , Object>> getInOutMovements(){
+
+        try {
+
+            Pageable lastTwentyMovements = Pageable.ofSize(20);
+            List<InOutParish> inOutParishMovements = inOutParishRepository.findAllByOrderByEntranceTimeDesc(lastTwentyMovements);
+            List<HashMap <String, Object>> allMovements = new ArrayList<>();
+            HashMap <String, Object> singleMovement = new HashMap<>();
+            for (InOutParish inOutParish: inOutParishMovements) {
+
+                Optional<Parishioner> parishioner = parishionerRepository.findById(inOutParish.getIdParishioner());
+                if (parishioner.isPresent()){
+
+                    singleMovement.put("idParishioner", inOutParish.getIdParishioner());
+                    singleMovement.put("entranceTime", inOutParish.getEntranceTime());
+                    singleMovement.put("exitTime", inOutParish.getExitTime());
+                    singleMovement.put("name", parishioner.get().getName());
+                    singleMovement.put("surname", parishioner.get().getSurname());
+                    allMovements.add(singleMovement);
+                }else {
+                    return null;
+                }
+
+            }
+            return allMovements;
+        }catch (Exception ex){
+            log.info("Errore durante recupero della lista degli ultimi 20 movmenti di ingresso uscita dalla parrocchia");
+            return null;
+        }
     }
 
 }
