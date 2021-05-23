@@ -1,12 +1,9 @@
 package it.holyfamily.holybadge.controllers;
 
 import it.holyfamily.holybadge.entities.User;
-import it.holyfamily.holybadge.security.configuration.TokenAuthenticationFilter;
-import it.holyfamily.holybadge.security.configuration.UserService;
-import it.holyfamily.holybadge.security.services.UserAuthenticationService;
+import it.holyfamily.holybadge.structuralservices.UserService;
 import it.holyfamily.holybadge.structuralservices.ParishionerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

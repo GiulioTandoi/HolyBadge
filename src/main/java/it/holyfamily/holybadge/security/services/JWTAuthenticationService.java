@@ -2,7 +2,7 @@ package it.holyfamily.holybadge.security.services;
 
 import it.holyfamily.holybadge.entities.User;
 import it.holyfamily.holybadge.security.Exception.TokenVerificationException;
-import it.holyfamily.holybadge.security.configuration.UserService;
+import it.holyfamily.holybadge.structuralservices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

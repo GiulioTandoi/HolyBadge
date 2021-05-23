@@ -1,4 +1,4 @@
-package it.holyfamily.holybadge.security.configuration;
+package it.holyfamily.holybadge.structuralservices;
 
 import it.holyfamily.holybadge.database.repositories.UserRepository;
 import it.holyfamily.holybadge.entities.User;

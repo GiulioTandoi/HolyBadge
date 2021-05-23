@@ -1,11 +1,8 @@
 package it.holyfamily.holybadge.controllers;
 
-import it.holyfamily.holybadge.entities.InOutParish;
-import it.holyfamily.holybadge.security.services.UserAuthenticationService;
 import it.holyfamily.holybadge.structuralservices.ParishionerService;
-import it.holyfamily.holybadge.security.configuration.UserService;
+import it.holyfamily.holybadge.structuralservices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,7 +27,7 @@ public class HomePageController {
     private static final Logger logger = Logger.getLogger(HomePageController.class.getName());
 
     @GetMapping(value = "/holybadge/homepage")
-    public ResponseEntity<Object> getListInoutOutMovements(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Object> getInoutOutMovementsList(HttpServletRequest request, HttpServletResponse response) {
 
         try{
             String role = userservice.authenticateCaller(request, response).getRole();
