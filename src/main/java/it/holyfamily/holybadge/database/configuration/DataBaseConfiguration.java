@@ -28,6 +28,7 @@ public class DataBaseConfiguration {
     private final String PROPERTY_PASSWORD = "password";
     private final String PROPERTY_SHOW_SQL = "hibernate.show_sql";
     private final String PROPERTY_DIALECT = "hibernate.dialect";
+    private final String DDL_AUTO = "hibernate.hbm2ddl.auto";
 
     @Autowired
     Environment environment;
@@ -56,6 +57,7 @@ public class DataBaseConfiguration {
         Properties properties = new Properties();
         properties.setProperty(PROPERTY_DIALECT, environment.getProperty(PROPERTY_DIALECT));
         properties.setProperty(PROPERTY_SHOW_SQL, environment.getProperty(PROPERTY_SHOW_SQL));
+        properties.setProperty(DDL_AUTO, environment.getProperty(DDL_AUTO));
         return properties;
     }
 

@@ -3,14 +3,14 @@ package it.holyfamily.holybadge.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "parishionertoadditional")
-public class ParishionerToAdditional {
+@Table(name = "membership")
+public class Membership {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Integer idParishioner;
-    private Integer idInfo;
+    private Integer idGroup;
 
     public Integer getId() {
         return id;
@@ -20,21 +20,20 @@ public class ParishionerToAdditional {
         this.id = id;
     }
 
-    public int getIdParishioner() {
+    public Integer getIdParishioner() {
         return idParishioner;
     }
 
-    public void setIdParishioner(int idParishioner) {
+    public void setIdParishioner(Integer idParishioner) {
         this.idParishioner = idParishioner;
     }
 
-    public int getIdInfo() {
-        return idInfo;
+    public Integer getIdGroup() {
+        return idGroup;
     }
 
-    public void setIdInfo(int idInfo) {
-        this.idInfo = idInfo;
+    public void setIdGroup(Integer idGroup) {
+        this.idGroup = idGroup;
     }
-
 
 }

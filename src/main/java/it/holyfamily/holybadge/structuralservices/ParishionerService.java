@@ -4,6 +4,7 @@ import it.holyfamily.holybadge.database.repositories.InOutParishRepository;
 import it.holyfamily.holybadge.database.repositories.ParishionerRepository;
 import it.holyfamily.holybadge.entities.InOutParish;
 import it.holyfamily.holybadge.entities.Parishioner;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 public class ParishionerService {
@@ -44,7 +44,7 @@ public class ParishionerService {
 
         return true;
     }
-    public boolean registeExit (int idParishioner, LocalDateTime exitTime){
+    public boolean registerExit(int idParishioner, LocalDateTime exitTime){
 
         log.info("REGISTRAZIONE DI USCITA ALLE " + exitTime + " PER L'ID " + idParishioner);
         try {
@@ -93,6 +93,33 @@ public class ParishionerService {
             log.info("Errore durante recupero della lista degli ultimi 20 movmenti di ingresso uscita dalla parrocchia");
             return null;
         }
+    }
+
+    public List<Parishioner> getParishionersList(){
+
+        try {
+
+            return (List<Parishioner>) parishionerRepository.findAll();
+
+        }catch (Exception ex){
+            log.info("Errore durante recupero della lista degli ultimi 20 movmenti di ingresso uscita dalla parrocchia");
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public HashMap<String, Object> getParishionerDetails (int idParishioner){
+
+        HashMap<String, Object> parishionerDetails = null;
+        try{
+
+
+        }catch (Exception ex){
+            log.error("ERRORE DURANTE IL RECUPERO DEL DETTAGLIO DEL PARROCCHIANO " + idParishioner, ex);
+        }
+
+        return parishionerDetails;
+
     }
 
 }

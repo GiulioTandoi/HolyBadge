@@ -14,12 +14,20 @@ public class Parishioner {
     private String name;
     private String surname;
     @Nullable
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @Nullable
     private String note;
 
     public Parishioner() {
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -38,14 +46,13 @@ public class Parishioner {
         this.surname = cognome;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-
 
     public String getNote() {
         return note;

@@ -4,15 +4,24 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "groups")
-public class Groups {
+public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String name;
 
-    public Groups() {
+    public Group() {
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
 
     public String getName() {
         return name;

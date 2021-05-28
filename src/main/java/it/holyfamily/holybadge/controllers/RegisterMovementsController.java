@@ -40,6 +40,7 @@ public class RegisterMovementsController {
         if(parishionerService.registerEntrance(userAuthenticated.getId(), LocalDateTime.now())){
             return new ResponseEntity<>("REGISTRAZIONE MOVIMENTO EFFETTUATA", HttpStatus.CREATED);
         }else {
+
             return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO" , HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -55,7 +56,7 @@ public class RegisterMovementsController {
             return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
         }
 
-        if(parishionerService.registeExit(userAuthenticated.getId(), LocalDateTime.now())){
+        if(parishionerService.registerExit(userAuthenticated.getId(), LocalDateTime.now())){
             return new ResponseEntity<>("REGISTRAZIONE MOVIMENTO EFFETTUATA", HttpStatus.OK);
         }else {
             return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO" , HttpStatus.INTERNAL_SERVER_ERROR);

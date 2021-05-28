@@ -50,7 +50,6 @@ public class JWTAuthenticationService implements UserAuthenticationService {
         }
     }
 
-    // TODO
     @Override
     public void logout(String username) {
     }
