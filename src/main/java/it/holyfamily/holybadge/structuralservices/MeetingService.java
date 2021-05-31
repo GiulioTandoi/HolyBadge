@@ -6,6 +6,7 @@ import it.holyfamily.holybadge.database.repositories.PartecipationRepository;
 import it.holyfamily.holybadge.entities.Meeting;
 import it.holyfamily.holybadge.entities.Parishioner;
 import it.holyfamily.holybadge.entities.Partecipation;
+import it.holyfamily.holybadge.pojos.MeetingPojo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,12 +62,11 @@ public class MeetingService {
         return partecipants;
     }
 
-    public Meeting createMeeting(Meeting meeting){
+    public Meeting createMeeting(MeetingPojo meeting){
 
-        Meeting meetingCreated = null;
-
+        Meeting meetingCreated = new Meeting(meeting);
         try{
-            meetingCreated = meetingRepository.save(meeting);
+            meetingCreated = meetingRepository.save(meetingCreated);
         }catch (Exception ex ){
             logger.error("ERRORE DURANTE LA CREAZIONE DEL MEETING " + meeting.getMeetingName(), ex);
         }
@@ -78,9 +78,7 @@ public class MeetingService {
 
         try{
             Optional<Meeting> meeting = meetingRepository.findById(meetingId);
-
             if(meeting.isPresent()){
-
                 meetingRepository.delete(meeting.get());
                 return true;
             }else{
@@ -146,12 +144,12 @@ public class MeetingService {
 
     }
 
-    public boolean removeGroupFromMeeting (String groupName, int idMeeting){
+    public boolean removeGroupFromMeeting (int idGroup, int idMeeting){
 
         try{
 
             List <Partecipation> partecipationsToBeDeleted = null;
-            List <Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(groupName);
+            List <Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(idGroup);
 
             for(Parishioner parishioner : parishionersOfGroup){
                 partecipationsToBeDeleted.add(partecipationRepository.findByIdParishionerAndIdMeeting(parishioner.getId(), idMeeting));
@@ -161,7 +159,7 @@ public class MeetingService {
             return true;
 
         }catch (Exception ex){
-            logger.error("ERRORE DURANTE LA RIMOZIONE " + groupName + " dal meeting " + idMeeting, ex);
+            logger.error("ERRORE DURANTE LA RIMOZIONE " + idGroup + " dal meeting " + idMeeting, ex);
             return false;
         }
 

@@ -2,18 +2,15 @@ package it.holyfamily.holybadge.structuralservices;
 
 import it.holyfamily.holybadge.database.repositories.UserRepository;
 import it.holyfamily.holybadge.entities.User;
-import it.holyfamily.holybadge.security.configuration.TokenAuthenticationFilter;
-import it.holyfamily.holybadge.security.configuration.TokenAuthenticationProvider;
+import it.holyfamily.holybadge.pojos.RegisterUserPojo;
 import it.holyfamily.holybadge.security.services.UserAuthenticationService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 import java.util.Optional;
 
 @Service
@@ -27,6 +24,7 @@ public class UserService {
     @Autowired
     UserAuthenticationService userAuthService;
 
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer";
 
@@ -45,5 +43,20 @@ public class UserService {
     public User authenticateCaller (HttpServletRequest request, HttpServletResponse response){
 
         return userAuthService.authenticateByToken(request.getHeader(AUTHORIZATION).replace(BEARER, "").trim());
+    }
+
+    public User registerUser(RegisterUserPojo toBeRegistered){
+
+        try{
+            User user = new User();
+            user.setUsername(toBeRegistered.getUsername());
+            user.setPassword(toBeRegistered.getPassword());
+            user.setRole(toBeRegistered.getRole());
+            return userRepository.save(user);
+        }catch (Exception e){
+            logger.error("ERRORE DURANTE LA CREAZIONE DELLO USER ", e);
+            return null;
+        }
+
     }
 }

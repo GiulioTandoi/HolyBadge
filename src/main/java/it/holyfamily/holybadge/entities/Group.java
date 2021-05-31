@@ -1,9 +1,11 @@
 package it.holyfamily.holybadge.entities;
 
+import it.holyfamily.holybadge.pojos.GroupPojo;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "groups")
+@Table(name = "parishgroup")
 public class Group {
 
     @Id
@@ -12,6 +14,10 @@ public class Group {
     private String name;
 
     public Group() {
+    }
+
+    public Group (GroupPojo groupPojo){
+        name = groupPojo.getName();
     }
 
     public Integer getId() {

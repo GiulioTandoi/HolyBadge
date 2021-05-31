@@ -1,20 +1,28 @@
 package it.holyfamily.holybadge.entities;
 
+import com.sun.istack.Nullable;
+import it.holyfamily.holybadge.pojos.ParishionerAdditionalInfoPojo;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "parishionerAdditionInfo")
-public class ParishionerAdditionInfo {
+@Table(name = "parishioneradditionalinfo")
+public class ParishionerAdditionalInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String infoName;
+    @Nullable
     private String infoValue;
 
-    public ParishionerAdditionInfo() {
+    public ParishionerAdditionalInfo() {
     }
 
+    public ParishionerAdditionalInfo(ParishionerAdditionalInfoPojo parishionerAdditionalInfoPojo) {
+        infoName = parishionerAdditionalInfoPojo.getInfoName();
+        infoValue = parishionerAdditionalInfoPojo.getInfoValue();
+    }
 
     public Integer getId() {
         return id;

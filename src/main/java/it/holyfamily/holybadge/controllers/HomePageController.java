@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowedHeaders = "*")
+@CrossOrigin(maxAge = 3600, allowedHeaders = "*")
 public class HomePageController {
 
     @Autowired

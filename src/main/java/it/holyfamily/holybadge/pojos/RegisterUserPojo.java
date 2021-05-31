@@ -1,30 +1,10 @@
-package it.holyfamily.holybadge.entities;
+package it.holyfamily.holybadge.pojos;
 
-import com.sun.istack.Nullable;
+public class RegisterUserPojo {
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "user")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     private String username;
     private String password;
     private String role;
-
-    public User() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;

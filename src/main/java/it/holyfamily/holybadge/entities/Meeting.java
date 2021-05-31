@@ -1,5 +1,8 @@
 package it.holyfamily.holybadge.entities;
 
+import com.sun.istack.Nullable;
+import it.holyfamily.holybadge.pojos.MeetingPojo;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,11 +22,17 @@ public class Meeting {
     public Meeting() {
     }
 
-    public int getId() {
+    public Meeting (MeetingPojo meetingPojo){
+        meetingName = meetingPojo.getMeetingName();
+        location = meetingPojo.getLocation();
+        date = meetingPojo.getDate();
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

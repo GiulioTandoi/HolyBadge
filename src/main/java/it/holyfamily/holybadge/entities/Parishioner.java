@@ -1,6 +1,7 @@
 package it.holyfamily.holybadge.entities;
 
 import com.sun.istack.Nullable;
+import it.holyfamily.holybadge.pojos.ParishionerPojo;
 
 import javax.persistence.*;
 
@@ -20,6 +21,13 @@ public class Parishioner {
     private String note;
 
     public Parishioner() {
+    }
+
+    public Parishioner (ParishionerPojo parishionerPojo){
+        name = parishionerPojo.getName();
+        surname = parishionerPojo.getSurname();
+        phoneNumber = parishionerPojo.getPhoneNumber();
+        note = parishionerPojo.getNote();
     }
 
     public Integer getId() {

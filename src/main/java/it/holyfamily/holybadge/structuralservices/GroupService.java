@@ -6,6 +6,7 @@ import it.holyfamily.holybadge.database.repositories.ParishionerRepository;
 import it.holyfamily.holybadge.entities.Group;
 import it.holyfamily.holybadge.entities.Membership;
 import it.holyfamily.holybadge.entities.Parishioner;
+import it.holyfamily.holybadge.pojos.GroupPojo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +48,14 @@ public class GroupService {
         return groups;
     }
 
-    public Group createGroup(Group group) {
+    public Group createGroup(GroupPojo group) {
 
-        Group createdGroup = null;
+        Group createdGroup = new Group(group);
 
         try {
-            createdGroup = groupsRepository.save(group);
+            createdGroup = groupsRepository.save(createdGroup);
         } catch (Exception ex) {
-            logger.error("ERRORE DURANTE LA CREAZIONE DEL MEETING " + group.getName(), ex);
+            logger.error("ERRORE DURANTE LA CREAZIONE DEL MEETING " + createdGroup.getName(), ex);
         }
 
         return createdGroup;
@@ -133,7 +134,7 @@ public class GroupService {
         try {
             return groupsRepository.save(group);
         }catch (Exception ex){
-            logger.error("ERRORE DURANTE L'UPDATE DELL'INCONTRO " + group.getId(), ex);
+            logger.error("ERRORE DURANTE L'UPDATE DEL GRUPPO " + group.getId(), ex);
             return null;
         }
 

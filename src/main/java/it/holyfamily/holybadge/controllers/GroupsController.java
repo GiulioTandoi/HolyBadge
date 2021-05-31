@@ -1,8 +1,8 @@
 package it.holyfamily.holybadge.controllers;
 
 import it.holyfamily.holybadge.entities.Group;
-import it.holyfamily.holybadge.entities.Meeting;
 import it.holyfamily.holybadge.entities.Parishioner;
+import it.holyfamily.holybadge.pojos.GroupPojo;
 import it.holyfamily.holybadge.structuralservices.GroupService;
 import it.holyfamily.holybadge.structuralservices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowedHeaders = "*")
+@CrossOrigin(maxAge = 3600, allowedHeaders = "*")
 public class GroupsController {
 
     @Autowired
@@ -87,7 +88,7 @@ public class GroupsController {
 
     @RequestMapping(value = "/holybadge/createGroup",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> createGroup (@RequestBody Group group, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Object> createGroup (@RequestBody GroupPojo group, HttpServletRequest request, HttpServletResponse response){
 
         try{
             String role = userService.authenticateCaller(request, response).getRole();
@@ -113,9 +114,9 @@ public class GroupsController {
 
     }
 
-    @RequestMapping(value = "/holybadge/addParishionerToGroup",method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> addParishionerToGroup (@RequestBody int idParishioner, @RequestBody int idGroup, HttpServletRequest request, HttpServletResponse response){
+
+    @RequestMapping(value = "/holybadge/deleteGroup",method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteGroup (@RequestParam(value = "idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response){
 
         try{
             String role = userService.authenticateCaller(request, response).getRole();
@@ -123,7 +124,36 @@ public class GroupsController {
             if (role.equals("admin")){
                 // Qui ho direttamente l'oggetto meeting al quale devo aggiungere il gruppo, quest'oggetto me lo passa il frontend (ad esempio dopo averlo selezionato
                 // con getMeetingsList)
-                boolean added = groupsService.addSingleParishionerToGroup(idParishioner, idGroup);
+                if (groupsService.deleteGroup(idGroup)){
+                    return new ResponseEntity<>(true, HttpStatus.OK);
+                }else {
+                    return new ResponseEntity<>("ERRORE DURANTE LA CANCELLAZIONE DEL GRUPPO " + idGroup, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+            }else {
+                throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
+            }
+
+        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+            logger.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
+        }catch (NullPointerException npe){
+            return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @RequestMapping(value = "/holybadge/addParishionerToGroup",method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> addParishionerToGroup (@RequestBody HashMap<String, Integer> params, HttpServletRequest request, HttpServletResponse response){
+
+        try{
+            String role = userService.authenticateCaller(request, response).getRole();
+
+            if (role.equals("admin")){
+                // Qui ho direttamente l'oggetto meeting al quale devo aggiungere il gruppo, quest'oggetto me lo passa il frontend (ad esempio dopo averlo selezionato
+                // con getMeetingsList)
+                boolean added = groupsService.addSingleParishionerToGroup(params.get("idParishioner"), params.get("idGroup"));
                 if (added){
                     return new ResponseEntity<>(true, HttpStatus.OK);
                 }else {
@@ -144,8 +174,7 @@ public class GroupsController {
     }
 
     @RequestMapping(value = "/holybadge/removeParishionerFromGroup",method = RequestMethod.DELETE)
-    @ResponseBody
-    public ResponseEntity<Object> removeParishionerFromGroup (@RequestBody int idParishioner, @RequestBody int idGroup, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Object> removeParishionerFromGroup (@RequestParam("idParishioner") int idParishioner, @RequestParam("idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response){
 
         try{
             String role = userService.authenticateCaller(request, response).getRole();
