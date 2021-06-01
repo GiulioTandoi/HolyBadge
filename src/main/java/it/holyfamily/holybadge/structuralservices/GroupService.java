@@ -82,14 +82,14 @@ public class GroupService {
 
     }
 
-    public List<Parishioner> getGrousMembers (int idGroup){
+    public List<Parishioner> getGrousMembers(int idGroup) {
 
-        List <Parishioner> members = null;
+        List<Parishioner> members = null;
         try {
 
             members = parishionerRepository.getAllGroupMembers(idGroup);
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
             logger.info("ERRORE DURANTE IL RECUPERO DEI MEMBRI DEL GRUPPO " + idGroup, ex);
 
@@ -99,7 +99,7 @@ public class GroupService {
 
     }
 
-    public boolean addSingleParishionerToGroup (int idParishioner, int idGroup) {
+    public boolean addSingleParishionerToGroup(int idParishioner, int idGroup) {
 
         try {
 
@@ -129,11 +129,11 @@ public class GroupService {
 
     }
 
-    public Group modifyGroup (Group group){
+    public Group modifyGroup(Group group) {
 
         try {
             return groupsRepository.save(group);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE L'UPDATE DEL GRUPPO " + group.getId(), ex);
             return null;
         }

@@ -40,20 +40,20 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public User authenticateCaller (HttpServletRequest request, HttpServletResponse response){
+    public User authenticateCaller(HttpServletRequest request, HttpServletResponse response) {
 
         return userAuthService.authenticateByToken(request.getHeader(AUTHORIZATION).replace(BEARER, "").trim());
     }
 
-    public User registerUser(RegisterUserPojo toBeRegistered){
+    public User registerUser(RegisterUserPojo toBeRegistered) {
 
-        try{
+        try {
             User user = new User();
             user.setUsername(toBeRegistered.getUsername());
             user.setPassword(toBeRegistered.getPassword());
             user.setRole(toBeRegistered.getRole());
             return userRepository.save(user);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("ERRORE DURANTE LA CREAZIONE DELLO USER ", e);
             return null;
         }

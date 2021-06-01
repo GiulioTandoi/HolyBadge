@@ -10,5 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 //Nel caso di REST API, invece, il server dovrà semplicemente restituire un errore 401, Unauthorized. Di conseguenza il metodo sendRedirect non dovrà fare nulla
 public class NoRedirectStrategy implements RedirectStrategy {
     @Override
-    public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url)  {}
+    public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) {
+    }
 }

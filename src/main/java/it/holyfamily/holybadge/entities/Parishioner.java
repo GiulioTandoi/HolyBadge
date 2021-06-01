@@ -23,7 +23,7 @@ public class Parishioner {
     public Parishioner() {
     }
 
-    public Parishioner (ParishionerPojo parishionerPojo){
+    public Parishioner(ParishionerPojo parishionerPojo) {
         name = parishionerPojo.getName();
         surname = parishionerPojo.getSurname();
         phoneNumber = parishionerPojo.getPhoneNumber();

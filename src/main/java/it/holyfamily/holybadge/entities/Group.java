@@ -16,7 +16,7 @@ public class Group {
     public Group() {
     }
 
-    public Group (GroupPojo groupPojo){
+    public Group(GroupPojo groupPojo) {
         name = groupPojo.getName();
     }
 

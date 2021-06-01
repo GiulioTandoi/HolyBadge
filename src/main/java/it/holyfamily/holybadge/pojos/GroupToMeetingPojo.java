@@ -22,5 +22,4 @@ public class GroupToMeetingPojo {
     private Integer idMeeting;
 
 
-
 }

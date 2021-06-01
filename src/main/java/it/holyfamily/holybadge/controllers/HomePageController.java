@@ -29,24 +29,24 @@ public class HomePageController {
     @GetMapping(value = "/holybadge/homepage")
     public ResponseEntity<Object> getInoutOutMovementsList(HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             String role = userservice.authenticateCaller(request, response).getRole();
 
-            if (role.equals("admin")){
-                List<HashMap <String, Object>> inOutMovementsList = parishionerService.getInOutMovements();
+            if (role.equals("admin")) {
+                List<HashMap<String, Object>> inOutMovementsList = parishionerService.getInOutMovements();
 
-                if (inOutMovementsList != null){
+                if (inOutMovementsList != null) {
                     return new ResponseEntity<>(inOutMovementsList, HttpStatus.OK);
-                }else {
+                } else {
                     String errorMessage = "ERRORE DURANTE IL RECUPERO DEI MOVIMENTI DEI PARROCCHIANI, ALCUNI PARROCCHIANI NON SONO REGISTRATI";
                     logger.info(errorMessage);
                     return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
-            }else {
+            } else {
                 return new ResponseEntity<>("UTENTE BASIC NON AUTORIZZATO PER QUESTO TIPO DI CHIAMATA", HttpStatus.FORBIDDEN);
             }
-        }catch (BadCredentialsException bce){
+        } catch (BadCredentialsException bce) {
             return new ResponseEntity<>(bce, HttpStatus.UNAUTHORIZED);
         }
 

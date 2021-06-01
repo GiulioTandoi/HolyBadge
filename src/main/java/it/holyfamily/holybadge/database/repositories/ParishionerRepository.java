@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository(value = "it.holyfamily.holybadge.database.repositories.ParishionerRepository")
-public interface ParishionerRepository extends CrudRepository <Parishioner, Integer> {
+public interface ParishionerRepository extends CrudRepository<Parishioner, Integer> {
 
     @Query(value = "SELECT p.id,p.name,p.surname,p.note,p.phoneNumber FROM parishioner p LEFT JOIN partecipation part ON p.id = part.idParishioner LEFT JOIN meeting m ON m.id = part.idMeeting WHERE part.idMeeting = :idMeeting", nativeQuery = true)
     List<Parishioner> getAllMeetingPartecipants(int idMeeting);

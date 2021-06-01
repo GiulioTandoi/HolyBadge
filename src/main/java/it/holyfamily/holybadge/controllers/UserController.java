@@ -33,41 +33,41 @@ public class UserController {
         baseuser
     }
 
-    @RequestMapping(value = "/holybadge/authenticate",method = RequestMethod.POST)
+    @RequestMapping(value = "/holybadge/authenticate", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getUser(@RequestBody UserCredentialsPojo formBody) {
 
-        try{
+        try {
             HashMap<String, String> loggedObject = new HashMap<>();
             loggedObject.put("token", userAuthService.login(formBody.getUsername(), formBody.getPassword()));
             loggedObject.put("role", userService.getByUserName(formBody.getUsername()).get().getRole());
             return new ResponseEntity<>(loggedObject, HttpStatus.OK);
-        }catch (BadCredentialsException bce){
+        } catch (BadCredentialsException bce) {
             return new ResponseEntity<>(bce, HttpStatus.UNAUTHORIZED);
         }
 
     }
 
-    @RequestMapping(value = "/holybadge/registerUser",method = RequestMethod.POST)
+    @RequestMapping(value = "/holybadge/registerUser", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> registerUser(@RequestBody RegisterUserPojo formBody, HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             userService.authenticateCaller(request, response);
             if (ROLE.valueOf(formBody.getRole()).equals(ROLE.admin) ||
-                    ROLE.valueOf(formBody.getRole()).equals(ROLE.baseuser)){
+                    ROLE.valueOf(formBody.getRole()).equals(ROLE.baseuser)) {
                 User user = userService.registerUser(formBody);
-                if (user != null){
+                if (user != null) {
                     return new ResponseEntity<>(user, HttpStatus.CREATED);
-                }else{
+                } else {
                     return new ResponseEntity<>("ERRORE DURANTE LA CREAZIONE DELLO USER", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
-            }else{
+            } else {
                 return new ResponseEntity<>("RUOLO NON PREVISTO", HttpStatus.BAD_REQUEST);
             }
 
-        }catch (BadCredentialsException | UsernameNotFoundException un){
+        } catch (BadCredentialsException | UsernameNotFoundException un) {
             return new ResponseEntity<>(un, HttpStatus.UNAUTHORIZED);
         }
 

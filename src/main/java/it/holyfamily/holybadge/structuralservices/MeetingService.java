@@ -33,73 +33,73 @@ public class MeetingService {
 
     private static final Logger logger = Logger.getLogger(MeetingService.class);
 
-    public List<Meeting> getMeetingsList(){
+    public List<Meeting> getMeetingsList() {
 
         List<Meeting> meetings = null;
         //Pageable firstElements = Pageable.ofSize(numElements);
         try {
 //            meetings = meetingRepository.findAllByOrderByDateDesc(firstElements);
             meetings = meetingRepository.findAllByOrderByDateDescGreaterThen(LocalDateTime.now());
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE IL RECUPERO LA LISTA DI INCONTRI", ex);
         }
 
         return meetings;
     }
 
-    public List<Parishioner> getMeetingPartecipants (int idMeeting){
+    public List<Parishioner> getMeetingPartecipants(int idMeeting) {
 
-        List <Parishioner> partecipants = null;
+        List<Parishioner> partecipants = null;
 
-        try{
+        try {
 
             partecipants = parishionerRepository.getAllMeetingPartecipants(idMeeting);
 
-        }catch (Exception ex ){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE IL RECUPERO DEI PARTECIPANTI ALL'INCONTRO " + idMeeting, ex);
         }
 
         return partecipants;
     }
 
-    public Meeting createMeeting(MeetingPojo meeting){
+    public Meeting createMeeting(MeetingPojo meeting) {
 
         Meeting meetingCreated = new Meeting(meeting);
-        try{
+        try {
             meetingCreated = meetingRepository.save(meetingCreated);
-        }catch (Exception ex ){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE LA CREAZIONE DEL MEETING " + meeting.getMeetingName(), ex);
         }
 
         return meetingCreated;
     }
 
-    public boolean deleteMeeting (int meetingId){
+    public boolean deleteMeeting(int meetingId) {
 
-        try{
+        try {
             Optional<Meeting> meeting = meetingRepository.findById(meetingId);
-            if(meeting.isPresent()){
+            if (meeting.isPresent()) {
                 meetingRepository.delete(meeting.get());
                 return true;
-            }else{
+            } else {
                 logger.info("IL GRUPPO DA CANCELLARE CON ID " + meetingId + " NON E' PRESENTE SUL DB");
                 return false;
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE LA RIMOZIONE DEL GRUPPO " + meetingId, ex);
             return false;
         }
 
     }
 
-    public boolean addGroupToMeeting (String groupName, int idMeeting){
+    public boolean addGroupToMeeting(String groupName, int idMeeting) {
 
-        try{
-            List <Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(groupName);
-            List <Partecipation> partecipations = null;
+        try {
+            List<Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(groupName);
+            List<Partecipation> partecipations = null;
             Partecipation partecipation;
-            for (Parishioner parishioner : parishionersOfGroup){
+            for (Parishioner parishioner : parishionersOfGroup) {
                 partecipation = new Partecipation();
                 partecipation.setIdMeeting(idMeeting);
                 partecipation.setIdParishioner(parishioner.getId());
@@ -107,69 +107,69 @@ public class MeetingService {
             }
 
             return partecipationRepository.saveAll(partecipations) != null;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE L'AGGIUNTA DEL GRUPPO " + groupName + " al meeting " + idMeeting, ex);
             return false;
         }
 
     }
 
-    public boolean addSingleParishionerToMeeting (int idParishioner, int idMeeting){
+    public boolean addSingleParishionerToMeeting(int idParishioner, int idMeeting) {
 
-        try{
+        try {
 
             Partecipation partecipation = new Partecipation();
             partecipation.setIdParishioner(idParishioner);
             partecipation.setIdMeeting(idMeeting);
             return partecipationRepository.save(partecipation) != null;
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE L'AGGIUNTA DEL PARROCCHIANO " + idParishioner + " al meeting " + idMeeting, ex);
             return false;
         }
 
     }
 
-    public boolean removeParishionerFromMeeting (int idParishioner, int idMeeting){
+    public boolean removeParishionerFromMeeting(int idParishioner, int idMeeting) {
 
-        try{
+        try {
 
             partecipationRepository.delete(partecipationRepository.findByIdParishionerAndIdMeeting(idParishioner, idMeeting));
             return true;
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE LA RIMOZIONE DEL PARROCCHIANO " + idParishioner + " dal meeting " + idMeeting, ex);
             return false;
         }
 
     }
 
-    public boolean removeGroupFromMeeting (int idGroup, int idMeeting){
+    public boolean removeGroupFromMeeting(int idGroup, int idMeeting) {
 
-        try{
+        try {
 
-            List <Partecipation> partecipationsToBeDeleted = null;
-            List <Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(idGroup);
+            List<Partecipation> partecipationsToBeDeleted = null;
+            List<Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(idGroup);
 
-            for(Parishioner parishioner : parishionersOfGroup){
+            for (Parishioner parishioner : parishionersOfGroup) {
                 partecipationsToBeDeleted.add(partecipationRepository.findByIdParishionerAndIdMeeting(parishioner.getId(), idMeeting));
             }
 
             partecipationRepository.deleteAll(partecipationsToBeDeleted);
             return true;
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE LA RIMOZIONE " + idGroup + " dal meeting " + idMeeting, ex);
             return false;
         }
 
     }
 
-    public Meeting modifyMeeting (Meeting meeting){
+    public Meeting modifyMeeting(Meeting meeting) {
 
         try {
             return meetingRepository.save(meeting);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("ERRORE DURANTE L'UPDATE DELL'INCONTRO " + meeting.getId(), ex);
             return null;
         }

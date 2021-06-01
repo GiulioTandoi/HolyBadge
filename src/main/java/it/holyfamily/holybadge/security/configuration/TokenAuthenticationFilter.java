@@ -27,8 +27,8 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
             HttpServletResponse response) {
         // La voce Bearer è sempre presente nel campo Authentication delle chiamate tokenizzate e precede sempre il valore del Token
         String token = Optional.ofNullable(request.getHeader(AUTHORIZATION))
-            .map(v -> v.replace(BEARER, "").trim())
-            .orElseThrow(() -> new BadCredentialsException("Missing authentication token."));
+                .map(v -> v.replace(BEARER, "").trim())
+                .orElseThrow(() -> new BadCredentialsException("Missing authentication token."));
 
         Authentication auth = new UsernamePasswordAuthenticationToken(token, token);
         return getAuthenticationManager().authenticate(auth);

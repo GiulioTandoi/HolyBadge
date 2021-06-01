@@ -1,6 +1,7 @@
 package it.holyfamily.holybadge.entities;
 
 import com.sun.istack.Nullable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 
@@ -14,6 +15,10 @@ public class User {
     private String username;
     private String password;
     private String role;
+
+
+    @Transient
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public User() {
     }
@@ -39,7 +44,8 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+
+        this.password = passwordEncoder.encode(password);
     }
 
     public String getRole() {

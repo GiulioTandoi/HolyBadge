@@ -22,7 +22,7 @@ public class Meeting {
     public Meeting() {
     }
 
-    public Meeting (MeetingPojo meetingPojo){
+    public Meeting(MeetingPojo meetingPojo) {
         meetingName = meetingPojo.getMeetingName();
         location = meetingPojo.getLocation();
         date = meetingPojo.getDate();

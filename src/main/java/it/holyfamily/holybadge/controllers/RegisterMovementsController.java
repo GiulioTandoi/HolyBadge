@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * PER UTILIZZARE GLI ENDPOINT DI INOUT PARISH DI QUESTO CONTROLLER BASTA CHE LA CHIAMATA SIA CERTIFICATA
  * DAL TOKEN (quindi che l'utente si è loggato con usertname e password validi)
  * NON SERVE CHE IL RUOLO SIA ADMIN
- * **/
+ **/
 @RestController
 @CrossOrigin(maxAge = 3600, allowedHeaders = "*")
 public class RegisterMovementsController {
@@ -32,38 +32,38 @@ public class RegisterMovementsController {
     UserService userService;
 
     @GetMapping("/holybadge/registerEntrance")
-    public ResponseEntity<Object> registerEntranceInParish(@RequestParam(value = "idParishioner") int idParishioner, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Object> registerEntranceInParish(@RequestParam(value = "idParishioner") int idParishioner, HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             userService.authenticateCaller(request, response);
-        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
             log.info("CHIAMATA NON AUTORIZZATA");
-            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
         }
 
-        if(parishionerService.registerEntrance(idParishioner, LocalDateTime.now())){
+        if (parishionerService.registerEntrance(idParishioner, LocalDateTime.now())) {
             return new ResponseEntity<>("REGISTRAZIONE MOVIMENTO EFFETTUATA", HttpStatus.CREATED);
-        }else {
+        } else {
 
-            return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO" , HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping("/holybadge/registerExit")
-    public ResponseEntity<Object> registerExitFromParish (@RequestParam(value = "idParishioner") int idParishioner, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Object> registerExitFromParish(@RequestParam(value = "idParishioner") int idParishioner, HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             userService.authenticateCaller(request, response);
-        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
             log.info("CHIAMATA NON AUTORIZZATA");
-            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
         }
 
-        if(parishionerService.registerExit(idParishioner, LocalDateTime.now())){
+        if (parishionerService.registerExit(idParishioner, LocalDateTime.now())) {
             return new ResponseEntity<>("REGISTRAZIONE MOVIMENTO EFFETTUATA", HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO" , HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -92,7 +92,6 @@ public class RegisterMovementsController {
 
     }
     */
-
 
 
 }

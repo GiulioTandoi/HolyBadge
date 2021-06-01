@@ -29,8 +29,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/", "/holybadge/**")
-                    .permitAll()
+                .antMatchers("/", "/holybadge/**")
+                .permitAll()
                 .anyRequest()
                 .authenticated();
 

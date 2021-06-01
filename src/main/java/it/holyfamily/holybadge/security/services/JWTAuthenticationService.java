@@ -6,9 +6,9 @@ import it.holyfamily.holybadge.structuralservices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -26,13 +26,13 @@ public class JWTAuthenticationService implements UserAuthenticationService {
     @Override
     public String login(String username, String password) throws BadCredentialsException {
 
-        log.info("THIS IS JWTAUTHSERVICE");
-
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         // Questo metodo è per la sola chiamata di login (che è pubblica) e non prevede un'autenticazione via token
         // la sola autenticazione è di username e password, poi genera il token che verrà utilizzato nelle chimate successive
         return userService
                 .getByUserName(username)
-                .filter(user -> Objects.equals(password, user.getPassword()))
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+                //.filter(user -> Objects.equals(password, user.getPassword()))
                 .map(user -> jwtService.create(user.getId(), user.getRole()))
                 .orElseThrow(() -> new BadCredentialsException("Invalid username or password."));
     }

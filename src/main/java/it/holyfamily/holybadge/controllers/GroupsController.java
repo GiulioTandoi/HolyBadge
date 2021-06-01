@@ -31,202 +31,202 @@ public class GroupsController {
     private static final Logger logger = Logger.getLogger(GroupsController.class.getName());
 
     @GetMapping(value = "/holybadge/groups")
-    public ResponseEntity<Object> getGroupsList (HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Object> getGroupsList(HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             String role = userService.authenticateCaller(request, response).getRole();
 
-            if (role.equals("admin")){
+            if (role.equals("admin")) {
                 List<Group> allGroups = groupsService.getGroupsList();
 
-                if (allGroups != null){
+                if (allGroups != null) {
                     return new ResponseEntity<>(allGroups, HttpStatus.OK);
-                }else {
+                } else {
                     return new ResponseEntity<>("ERRORE DURANTE RECUPERO LISTA INCONTRI", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
-            }else {
+            } else {
                 throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
             }
 
-        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
             logger.info("CHIAMATA NON AUTORIZZATA");
-            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
-        }catch (NullPointerException npe){
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
             return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
         }
 
     }
 
     @GetMapping(value = "/holybadge/groupsMembers")
-    public ResponseEntity<Object> getGroupMembers (@RequestParam(value = "idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Object> getGroupMembers(@RequestParam(value = "idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             String role = userService.authenticateCaller(request, response).getRole();
 
-            if (role.equals("admin")){
+            if (role.equals("admin")) {
                 List<Parishioner> members = groupsService.getGrousMembers(idGroup);
 
-                if (members != null){
+                if (members != null) {
                     return new ResponseEntity<>(members, HttpStatus.OK);
-                }else {
+                } else {
                     return new ResponseEntity<>("ERRORE DURANTE RECUPERO PARTECIPANTI", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
-            }else {
+            } else {
                 throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
             }
 
-        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
             logger.info("CHIAMATA NON AUTORIZZATA");
-            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
-        }catch (NullPointerException npe){
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
             return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    @RequestMapping(value = "/holybadge/createGroup",method = RequestMethod.POST)
+    @RequestMapping(value = "/holybadge/createGroup", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> createGroup (@RequestBody GroupPojo group, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Object> createGroup(@RequestBody GroupPojo group, HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             String role = userService.authenticateCaller(request, response).getRole();
 
-            if (role.equals("admin")){
+            if (role.equals("admin")) {
                 Group createdGroup = groupsService.createGroup(group);
-                if (createdGroup != null){
+                if (createdGroup != null) {
                     return new ResponseEntity<>(createdGroup, HttpStatus.CREATED);
-                }else {
+                } else {
                     return new ResponseEntity<>("ERRORE DURANTE RECUPERO PARTECIPANTI", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
-            }else {
+            } else {
                 throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
             }
 
-        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
             logger.info("CHIAMATA NON AUTORIZZATA");
-            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
-        }catch (NullPointerException npe){
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
             return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
         }
 
     }
 
 
-    @RequestMapping(value = "/holybadge/deleteGroup",method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteGroup (@RequestParam(value = "idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping(value = "/holybadge/deleteGroup", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteGroup(@RequestParam(value = "idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             String role = userService.authenticateCaller(request, response).getRole();
 
-            if (role.equals("admin")){
+            if (role.equals("admin")) {
                 // Qui ho direttamente l'oggetto meeting al quale devo aggiungere il gruppo, quest'oggetto me lo passa il frontend (ad esempio dopo averlo selezionato
                 // con getMeetingsList)
-                if (groupsService.deleteGroup(idGroup)){
+                if (groupsService.deleteGroup(idGroup)) {
                     return new ResponseEntity<>(true, HttpStatus.OK);
-                }else {
+                } else {
                     return new ResponseEntity<>("ERRORE DURANTE LA CANCELLAZIONE DEL GRUPPO " + idGroup, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
-            }else {
+            } else {
                 throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
             }
 
-        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
             logger.info("CHIAMATA NON AUTORIZZATA");
-            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
-        }catch (NullPointerException npe){
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
             return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    @RequestMapping(value = "/holybadge/addParishionerToGroup",method = RequestMethod.POST)
+    @RequestMapping(value = "/holybadge/addParishionerToGroup", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> addParishionerToGroup (@RequestBody HashMap<String, Integer> params, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Object> addParishionerToGroup(@RequestBody HashMap<String, Integer> params, HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             String role = userService.authenticateCaller(request, response).getRole();
 
-            if (role.equals("admin")){
+            if (role.equals("admin")) {
                 // Qui ho direttamente l'oggetto meeting al quale devo aggiungere il gruppo, quest'oggetto me lo passa il frontend (ad esempio dopo averlo selezionato
                 // con getMeetingsList)
                 boolean added = groupsService.addSingleParishionerToGroup(params.get("idParishioner"), params.get("idGroup"));
-                if (added){
+                if (added) {
                     return new ResponseEntity<>(true, HttpStatus.OK);
-                }else {
+                } else {
                     return new ResponseEntity<>("ERRORE DURANTE RECUPERO PARTECIPANTI", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
-            }else {
+            } else {
                 throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
             }
 
-        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
             logger.info("CHIAMATA NON AUTORIZZATA");
-            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
-        }catch (NullPointerException npe){
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
             return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    @RequestMapping(value = "/holybadge/removeParishionerFromGroup",method = RequestMethod.DELETE)
-    public ResponseEntity<Object> removeParishionerFromGroup (@RequestParam("idParishioner") int idParishioner, @RequestParam("idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping(value = "/holybadge/removeParishionerFromGroup", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> removeParishionerFromGroup(@RequestParam("idParishioner") int idParishioner, @RequestParam("idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             String role = userService.authenticateCaller(request, response).getRole();
 
-            if (role.equals("admin")){
+            if (role.equals("admin")) {
                 // Qui ho direttamente l'oggetto meeting al quale devo aggiungere il gruppo, quest'oggetto me lo passa il frontend (ad esempio dopo averlo selezionato
                 // con getMeetingsList)
                 boolean removed = groupsService.removeParishionerFromGroup(idParishioner, idGroup);
-                if (removed){
+                if (removed) {
                     return new ResponseEntity<>(true, HttpStatus.OK);
-                }else {
+                } else {
                     return new ResponseEntity<>("ERRORE DURANTE ELIMINAZIONE PARTECIPANTE " + idParishioner, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
-            }else {
+            } else {
                 throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
             }
 
-        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
             logger.info("CHIAMATA NON AUTORIZZATA");
-            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
-        }catch (NullPointerException npe){
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
             return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    @RequestMapping(value = "/holybadge/modifyGroup",method = RequestMethod.POST)
+    @RequestMapping(value = "/holybadge/modifyGroup", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> modifyGroup (@RequestBody Group group, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Object> modifyGroup(@RequestBody Group group, HttpServletRequest request, HttpServletResponse response) {
 
-        try{
+        try {
             String role = userService.authenticateCaller(request, response).getRole();
 
-            if (role.equals("admin")){
+            if (role.equals("admin")) {
                 // Qui ho direttamente l'oggetto meeting al quale devo aggiungere il gruppo, quest'oggetto me lo passa il frontend (ad esempio dopo averlo selezionato
                 // con getMeetingsList)
                 Group modified = groupsService.modifyGroup(group);
-                if (modified != null){
+                if (modified != null) {
                     return new ResponseEntity<>(modified, HttpStatus.OK);
-                }else {
+                } else {
                     return new ResponseEntity<>("ERRORE DURANTE MODIFICA DELL'INCONTRO", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
-            }else {
+            } else {
                 throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
             }
 
-        }catch(UsernameNotFoundException | BadCredentialsException unfe){
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
             logger.info("CHIAMATA NON AUTORIZZATA");
-            return new ResponseEntity <> (unfe, HttpStatus.UNAUTHORIZED);
-        }catch (NullPointerException npe){
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
             return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
         }
 

@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository(value = "it.holyfamily.holybadge.database.repositories.MeetingRepository")
-public interface MeetingRepository extends CrudRepository <Meeting, Integer> {
+public interface MeetingRepository extends CrudRepository<Meeting, Integer> {
 
 //    List<Meeting> findAllByOrderByDateDesc(Pageable pageable);
 
     @Query(value = "SELECT * FROM meeting WHERE date >= :date", nativeQuery = true)
-    List <Meeting> findAllByOrderByDateDescGreaterThen(LocalDateTime date);
+    List<Meeting> findAllByOrderByDateDescGreaterThen(LocalDateTime date);
 
 }
