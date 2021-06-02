@@ -128,12 +128,12 @@ public class ParishionerService {
 
         try {
 
-            Pageable lastTwentyMovements = Pageable.ofSize(20);
-            List<InOutParish> inOutParishMovements = inOutParishRepository.findAllByOrderByEntranceTimeDesc(lastTwentyMovements);
+            Pageable lastHundredMovements = Pageable.ofSize(100);
+            List<InOutParish> inOutParishMovements = inOutParishRepository.findAllByOrderByEntranceTimeDesc(lastHundredMovements);
             List<HashMap<String, Object>> allMovements = new ArrayList<>();
-            HashMap<String, Object> singleMovement = new HashMap<>();
+            HashMap<String, Object> singleMovement;
             for (InOutParish inOutParish : inOutParishMovements) {
-
+                singleMovement = new HashMap<>();
                 Optional<Parishioner> parishioner = parishionerRepository.findById(inOutParish.getIdParishioner());
                 if (parishioner.isPresent()) {
 

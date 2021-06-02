@@ -1,8 +1,9 @@
 package it.holyfamily.holybadge.controllers;
 
 import it.holyfamily.holybadge.entities.Group;
-import it.holyfamily.holybadge.entities.Parishioner;
+import it.holyfamily.holybadge.pojos.AddParsToGroupPojo;
 import it.holyfamily.holybadge.pojos.GroupPojo;
+import it.holyfamily.holybadge.pojos.ParishionersOfGroup;
 import it.holyfamily.holybadge.structuralservices.GroupService;
 import it.holyfamily.holybadge.structuralservices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -65,7 +65,7 @@ public class GroupsController {
             String role = userService.authenticateCaller(request, response).getRole();
 
             if (role.equals("admin")) {
-                List<Parishioner> members = groupsService.getGrousMembers(idGroup);
+                List<ParishionersOfGroup> members = groupsService.getGroupMembers(idGroup);
 
                 if (members != null) {
                     return new ResponseEntity<>(members, HttpStatus.OK);
@@ -143,9 +143,9 @@ public class GroupsController {
 
     }
 
-    @RequestMapping(value = "/holybadge/addParishionerToGroup", method = RequestMethod.POST)
+    @RequestMapping(value = "/holybadge/addParishionersToGroup", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> addParishionerToGroup(@RequestBody HashMap<String, Integer> params, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Object> addParishionersToGroup(@RequestBody AddParsToGroupPojo params, HttpServletRequest request, HttpServletResponse response) {
 
         try {
             String role = userService.authenticateCaller(request, response).getRole();
@@ -153,7 +153,7 @@ public class GroupsController {
             if (role.equals("admin")) {
                 // Qui ho direttamente l'oggetto meeting al quale devo aggiungere il gruppo, quest'oggetto me lo passa il frontend (ad esempio dopo averlo selezionato
                 // con getMeetingsList)
-                boolean added = groupsService.addSingleParishionerToGroup(params.get("idParishioner"), params.get("idGroup"));
+                boolean added = groupsService.addParishionerListToGroup(params.getIdParishioners(), params.getIdGroup());
                 if (added) {
                     return new ResponseEntity<>(true, HttpStatus.OK);
                 } else {

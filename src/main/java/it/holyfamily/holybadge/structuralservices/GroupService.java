@@ -7,12 +7,14 @@ import it.holyfamily.holybadge.entities.Group;
 import it.holyfamily.holybadge.entities.Membership;
 import it.holyfamily.holybadge.entities.Parishioner;
 import it.holyfamily.holybadge.pojos.GroupPojo;
+import it.holyfamily.holybadge.pojos.ParishionersOfGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -82,36 +84,52 @@ public class GroupService {
 
     }
 
-    public List<Parishioner> getGrousMembers(int idGroup) {
+    public List<ParishionersOfGroup> getGroupMembers(int idGroup) {
 
         List<Parishioner> members = null;
+        List<Parishioner> notMemebrs = null;
+        List<ParishionersOfGroup> parishioners = null;
         try {
 
             members = parishionerRepository.getAllGroupMembers(idGroup);
-
+            ParishionersOfGroup ofGroup;
+            for (Parishioner parishioner: members){
+                ofGroup = new ParishionersOfGroup(parishioner, true);
+                parishioners.add(ofGroup);
+            }
+            notMemebrs = parishionerRepository.getNotGroupMemebers(idGroup);
+            ParishionersOfGroup notOfGroup;
+            for (Parishioner parishioner: notMemebrs){
+                notOfGroup = new ParishionersOfGroup(parishioner, false);
+                parishioners.add(notOfGroup);
+            }
         } catch (Exception ex) {
 
             logger.info("ERRORE DURANTE IL RECUPERO DEI MEMBRI DEL GRUPPO " + idGroup, ex);
-
+            return null;
         }
 
-        return members;
+        return parishioners;
 
     }
 
-    public boolean addSingleParishionerToGroup(int idParishioner, int idGroup) {
+    public boolean addParishionerListToGroup(List<Integer> idParishioners, int idGroup) {
 
+        Membership membership;
         try {
+            for (int idParishioner : idParishioners){
+                membership = new Membership();
+                membership.setIdParishioner(idParishioner);
+                membership.setIdGroup(idGroup);
+                membershipRepository.save(membership);
+            }
 
-            Membership membership = new Membership();
-            membership.setIdParishioner(idParishioner);
-            membership.setIdGroup(idGroup);
-            return membershipRepository.save(membership) != null;
-
-        } catch (Exception ex) {
-            logger.error("ERRORE DURANTE L'AGGIUNTA DEL PARROCCHIANO " + idParishioner + " al meeting " + idGroup, ex);
+        }catch (Exception ex) {
+            logger.error("ERRORE DURANTE L'AGGIUNTA DELLA LISTA DEI PARROCCHIANI AL GFRUPPO " + idGroup, ex);
             return false;
         }
+
+        return true;
 
     }
 
