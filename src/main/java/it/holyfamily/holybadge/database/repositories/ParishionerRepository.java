@@ -21,6 +21,7 @@ public interface ParishionerRepository extends CrudRepository<Parishioner, Integ
     @Query(value = "SELECT p.id,p.name,p.surname,p.note,p.phoneNumber FROM parishioner p LEFT JOIN membership memb ON p.id = memb.idParishioner LEFT JOIN parishgroup g ON g.id = memb.idGroup WHERE g.id = :idGroup", nativeQuery = true)
     List<Parishioner> getAllGroupMembers(int idGroup);
 
-    @Query(value = "SELECT p.id,p.name,p.surname,p.note,p.phoneNumber FROM parishioner p LEFT JOIN membership memb ON p.id = memb.idParishioner LEFT JOIN parishgroup g ON g.id = memb.idGroup WHERE g.id <> :idGroup", nativeQuery = true)
+    @Query(value = "SELECT p.id,p.name,p.surname,p.note,p.phoneNumber FROM parishioner p LEFT JOIN membership memb ON p.id = memb.idParishioner LEFT JOIN parishgroup g ON g.id = memb.idGroup WHERE g.id <> :idGroup OR p.id NOT IN (SELECT m.idParishioner FROM membership m)", nativeQuery = true)
     List<Parishioner> getNotGroupMemebers(int idGroup);
+
 }

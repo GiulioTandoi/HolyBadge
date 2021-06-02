@@ -88,7 +88,7 @@ public class GroupService {
 
         List<Parishioner> members = null;
         List<Parishioner> notMemebrs = null;
-        List<ParishionersOfGroup> parishioners = null;
+        List<ParishionersOfGroup> parishioners = new ArrayList<>();
         try {
 
             members = parishionerRepository.getAllGroupMembers(idGroup);
