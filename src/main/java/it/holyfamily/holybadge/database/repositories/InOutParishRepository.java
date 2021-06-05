@@ -11,7 +11,7 @@ import java.util.List;
 @Repository(value = "it.holyfamily.holybadge.database.repositories.InOutParishRepository")
 public interface InOutParishRepository extends CrudRepository<InOutParish, Integer> {
 
-    List<InOutParish> findByIdParishionerOrderByEntranceTimeDesc(@Param("idParishioner") int idParishioner, Pageable pageable);
+    List<InOutParish> findByIdParishionerAndExitTimeNullOrderByEntranceTimeDesc(@Param("idParishioner") int idParishioner, Pageable pageable);
 
     List<InOutParish> findAllByOrderByEntranceTimeDesc(Pageable pageable);
 

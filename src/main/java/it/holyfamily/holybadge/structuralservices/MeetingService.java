@@ -1,18 +1,18 @@
 package it.holyfamily.holybadge.structuralservices;
 
-import it.holyfamily.holybadge.database.repositories.MeetingRepository;
-import it.holyfamily.holybadge.database.repositories.ParishionerRepository;
-import it.holyfamily.holybadge.database.repositories.PartecipationRepository;
-import it.holyfamily.holybadge.entities.Meeting;
-import it.holyfamily.holybadge.entities.Parishioner;
-import it.holyfamily.holybadge.entities.Partecipation;
+import it.holyfamily.holybadge.database.repositories.*;
+import it.holyfamily.holybadge.entities.*;
 import it.holyfamily.holybadge.pojos.MeetingPojo;
+import it.holyfamily.holybadge.pojos.PartecipantPojo;
+import it.holyfamily.holybadge.pojos.PartecipationPojo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +30,10 @@ public class MeetingService {
     @Qualifier("it.holyfamily.holybadge.database.repositories.ParishionerRepository")
     @Autowired
     ParishionerRepository parishionerRepository;
+
+    @Qualifier("it.holyfamily.holybadge.database.repositories.MembershipRepository")
+    @Autowired
+    MembershipRepository membershipRepository;
 
     private static final Logger logger = Logger.getLogger(MeetingService.class);
 
@@ -114,20 +118,83 @@ public class MeetingService {
 
     }
 
-    public boolean addSingleParishionerToMeeting(int idParishioner, int idMeeting) {
+    public List <PartecipationPojo> getMeetingsOfParishioner(int idParishioner){
 
         try {
 
-            Partecipation partecipation = new Partecipation();
+            List <PartecipationPojo> partecipationsList = new ArrayList<>();
+            List <Partecipation> partecipations = partecipationRepository.findAllByIdParishioner(idParishioner);
+            Meeting meeting;
+            PartecipationPojo partecipationPojo;
+            for (Partecipation partecipation : partecipations){
+                meeting = meetingRepository.findById(partecipation.getIdMeeting()).get();
+                partecipationPojo = new PartecipationPojo();
+                partecipationPojo.setPartecipation(partecipation.getPartecipated());
+                partecipationPojo.setMeetingName(meeting.getMeetingName());
+                partecipationPojo.setMeetingDate(meeting.getDate());
+                partecipationPojo.setMeetingLocation(meeting.getLocation());
+                partecipationsList.add(partecipationPojo);
+            }
+
+            return partecipationsList;
+
+        }catch (Exception ex){
+            logger.error("ERRORE DURANTE IL RECUPERO DEGLI INCONTRI DEL PARROCCHIANO " + idParishioner, ex);
+            return null;
+        }
+
+    }
+
+    public List<String> getMembershipsOfPartecipant (int idParishioner){
+
+        try{
+
+            return membershipRepository.getGroupNamesOfParishioner(idParishioner);
+
+        }catch (Exception ex){
+            logger.error("ERRORE DURANTE IL RECUPERO DEI GRUPPI DI APPARTENENZA DEL PARROCCHIANO " + idParishioner,ex);
+            return null;
+        }
+
+    }
+
+    public List<PartecipantPojo> getAllNotPartecipants (int idMeeting){
+
+        List<PartecipantPojo> notPartecipants = new ArrayList<>();
+        try {
+
+            List <Parishioner> allParishioners = (List<Parishioner>) parishionerRepository.findAll();
+            List <Integer> pars = partecipationRepository.getIdParishionersByIdMeeting(idMeeting);
+            for (Parishioner parishioner : allParishioners){
+
+                if (!pars.contains(parishioner.getId())){
+                    notPartecipants.add(new PartecipantPojo(parishioner));
+                }
+
+            }
+
+            return notPartecipants;
+        }catch (Exception ex){
+            logger.error("ERRORE DURANTE IL RECUPERO DEI NON PARTECIPANTI ALL'INCONTRO " + idMeeting, ex);
+            return null;
+        }
+
+    }
+
+    public boolean addSingleParishionerToMeeting(Integer idParishioner, int idMeeting) {
+
+        Partecipation partecipation;
+        try {
+            partecipation = new Partecipation();
             partecipation.setIdParishioner(idParishioner);
             partecipation.setIdMeeting(idMeeting);
-            return partecipationRepository.save(partecipation) != null;
 
-        } catch (Exception ex) {
-            logger.error("ERRORE DURANTE L'AGGIUNTA DEL PARROCCHIANO " + idParishioner + " al meeting " + idMeeting, ex);
+        }catch (Exception ex) {
+            logger.error("ERRORE DURANTE L'AGGIUNTA DEL PARROCCHIANO al meeting " + idMeeting, ex);
             return false;
         }
 
+        return true;
     }
 
     public boolean removeParishionerFromMeeting(int idParishioner, int idMeeting) {

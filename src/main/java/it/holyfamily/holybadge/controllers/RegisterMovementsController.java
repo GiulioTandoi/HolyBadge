@@ -59,11 +59,11 @@ public class RegisterMovementsController {
             log.info("CHIAMATA NON AUTORIZZATA");
             return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
         }
-
-        if (parishionerService.registerExit(idParishioner, LocalDateTime.now())) {
-            return new ResponseEntity<>("REGISTRAZIONE MOVIMENTO EFFETTUATA", HttpStatus.OK);
+        String result = parishionerService.registerExit(idParishioner, LocalDateTime.now());
+        if (!result.equals("REGISTRAZIONE MOVIMENTO EFFETTUATA")) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }

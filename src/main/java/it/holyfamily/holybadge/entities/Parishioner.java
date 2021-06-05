@@ -4,6 +4,7 @@ import com.sun.istack.Nullable;
 import it.holyfamily.holybadge.pojos.ParishionerPojo;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "parishioner")
@@ -16,6 +17,11 @@ public class Parishioner {
     private String surname;
     @Nullable
     private String phoneNumber;
+    @Nullable
+    private String secondPhone;
+    private LocalDateTime dataNascita;
+    private String allergiePatologie;
+    private String tagliaMaglietta;
 
     @Nullable
     private String note;
@@ -28,6 +34,10 @@ public class Parishioner {
         surname = parishionerPojo.getSurname();
         phoneNumber = parishionerPojo.getPhoneNumber();
         note = parishionerPojo.getNote();
+        secondPhone = parishionerPojo.getSecondPhone();
+        dataNascita = parishionerPojo.getDataNascita();
+        allergiePatologie = parishionerPojo.getAllergiePatologie();
+        tagliaMaglietta = parishionerPojo.getTagliaMaglietta();
     }
 
     public Integer getId() {
@@ -69,4 +79,38 @@ public class Parishioner {
     public void setNote(String note) {
         this.note = note;
     }
+
+
+    public String getSecondPhone() {
+        return secondPhone;
+    }
+
+    public void setSecondPhone(String secondPhone) {
+        this.secondPhone = secondPhone;
+    }
+
+    public LocalDateTime getDataNascita() {
+        return dataNascita;
+    }
+
+    public void setDataNascita(LocalDateTime dataNascita) {
+        this.dataNascita = dataNascita;
+    }
+
+    public String getAllergiePatologie() {
+        return allergiePatologie;
+    }
+
+    public void setAllergiePatologie(String allergiePatologie) {
+        this.allergiePatologie = allergiePatologie;
+    }
+
+    public String getTagliaMaglietta() {
+        return tagliaMaglietta;
+    }
+
+    public void setTagliaMaglietta(String tagliaMaglietta) {
+        this.tagliaMaglietta = tagliaMaglietta;
+    }
+
 }

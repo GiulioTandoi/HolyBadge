@@ -12,7 +12,10 @@ import java.util.List;
 @Repository(value = "it.holyfamily.holybadge.database.repositories.PartecipationRepository")
 public interface PartecipationRepository extends CrudRepository<Partecipation, Integer> {
 
-    List<Partecipation> findAllByIdMeeting(int idMeeting);
+    List<Partecipation> findAllByIdParishioner(int idMeeting);
+
+    @Query(value = "SELECT part.idParishioner FROM partecipation part", nativeQuery = true)
+    List<Integer> getIdParishionersByIdMeeting(int idMeeting);
 
     Partecipation findByIdParishionerAndIdMeeting(int idParishioner, int idMeeting);
 

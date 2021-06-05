@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,17 +46,16 @@ public class ParishionerService {
 
         log.info("REGISTRAZIONE DI INGRESSO ALLE " + entranceTime + " PER L'ID " + idParishioner);
         try {
-            InOutParish lastinout = inOutParishRepository.findByIdParishionerOrderByEntranceTimeDesc(idParishioner, Pageable.ofSize(1)).get(0);
-            if (lastinout.getExitTime() == null){
+            List<InOutParish> lastEntrances = inOutParishRepository.findByIdParishionerAndExitTimeNullOrderByEntranceTimeDesc(idParishioner, Pageable.ofSize(1));
+            if (!lastEntrances.isEmpty()){
+                inOutParishRepository.save(lastEntrances.get(0));
+            }else{
                 InOutParish inOutParish = new InOutParish(entranceTime, idParishioner);
                 inOutParishRepository.save(inOutParish);
-            }else {
-                log.info("L'utente è già stato registrato con ingresso " + lastinout.getEntranceTime());
-                return false;
             }
 
         } catch (Exception ex) {
-            log.info("ERRORE DURANTE IL SALVATAGGIO DEL MOVIMENTO DI ENTRATA DEL PARISHIONER " + idParishioner);
+            log.error("ERRORE DURANTE IL SALVATAGGIO DEL MOVIMENTO DI ENTRATA DEL PARISHIONER " + idParishioner, ex);
             ex.printStackTrace();
             return false;
         }
@@ -63,16 +63,16 @@ public class ParishionerService {
         return true;
     }
 
-    public boolean registerExit(int idParishioner, LocalDateTime exitTime) {
+    public String registerExit(int idParishioner, LocalDateTime exitTime) {
 
         log.info("REGISTRAZIONE DI USCITA ALLE " + exitTime + " PER L'ID " + idParishioner);
         try {
 
             // Pageable è una classe di spring data che consente di selezionare un range di risultati come un LIMIT
             Pageable lastEntrance = Pageable.ofSize(1);
-            InOutParish inOutParish = inOutParishRepository.findByIdParishionerOrderByEntranceTimeDesc(idParishioner, lastEntrance).get(0);
+            InOutParish inOutParish = inOutParishRepository.findByIdParishionerAndExitTimeNullOrderByEntranceTimeDesc(idParishioner, lastEntrance).get(0);
 
-            if (inOutParish != null){
+            if (inOutParish != null && inOutParish.getEntranceTime() != null){
                 // SETTO LA PARTECIPAZIONE DEL PARISHIONER A TUTTI GLI INCONTRI CHE AVEVA IN PROGRAMMA PER L'ORARIO IN CUI E' STATO IN PARROCCHIA
                 // recupero tutti gli incontri che aveva in programma il parishioner per la data odierna CON L'ORARIO DI INIZIO PRECEDENTE ALL'ORARIO DI USCITA dalla parrocchia
                 try {
@@ -80,7 +80,7 @@ public class ParishionerService {
                     Partecipation partecipation;
                     for (int idMeeting : scheduledMeetingsId) {
                         partecipation = partecipationRepository.findByIdParishionerAndIdMeeting(idParishioner, idMeeting);
-                        partecipation.setPartecipated(exitTime);
+                        partecipation.setPartecipated(inOutParish.getEntranceTime());
                         partecipationRepository.save(partecipation);
                     }
                     log.info("PARTECIPAZIONI A CUI IL PARROCCHIANO HA PARTECIPATO PRIA DI USCIRE " + scheduledMeetingsId.size());
@@ -92,16 +92,16 @@ public class ParishionerService {
                 inOutParishRepository.save(inOutParish);
             }else {
                 log.info("IL PARROCCHIANO " + idParishioner + " NON E' ENTRATO IN PARROCCHIA");
-                return false;
+                return "IL PARROCCHIANO NON E' ENTRATO IN PARROCCHIA";
             }
 
         } catch (Exception ex) {
             log.error("ERRORE DURANTE IL SALVATAGGIO DEL MOVIMENTO DI USCITA DEL PARISHIONER " + idParishioner, ex);
             ex.printStackTrace();
-            return false;
+            return "ERRORE DURANTE IL SALVATAGGIO DEL MOVIMENTO DI USCITA DEL PARISHIONER ";
         }
 
-        return true;
+        return "REGISTRAZIONE MOVIMENTO EFFETTUATA";
     }
 
     public boolean registerPartecipationToMeeting(int idParishioner, int idMeeting, LocalDateTime partecipationDate) {

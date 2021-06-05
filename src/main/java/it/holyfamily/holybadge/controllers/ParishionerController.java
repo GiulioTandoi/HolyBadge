@@ -1,13 +1,12 @@
 package it.holyfamily.holybadge.controllers;
 
 
-import it.holyfamily.holybadge.entities.Meeting;
 import it.holyfamily.holybadge.entities.Parishioner;
 import it.holyfamily.holybadge.entities.ParishionerAdditionalInfo;
 import it.holyfamily.holybadge.pojos.AdditionalInfoToSingleParishionerPojo;
-import it.holyfamily.holybadge.pojos.MeetingPojo;
 import it.holyfamily.holybadge.pojos.ParishionerAdditionalInfoPojo;
 import it.holyfamily.holybadge.pojos.ParishionerPojo;
+import it.holyfamily.holybadge.structuralservices.MeetingService;
 import it.holyfamily.holybadge.structuralservices.ParishionerService;
 import it.holyfamily.holybadge.structuralservices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,9 @@ public class ParishionerController {
 
     @Autowired
     ParishionerService parishionerService;
+
+    @Autowired
+    MeetingService meetingService;
 
     private static final Logger logger = Logger.getLogger(ParishionerController.class.getName());
 
@@ -132,6 +134,8 @@ public class ParishionerController {
                 List<ParishionerAdditionalInfo> parishionerAdditionalInfo = parishionerService.getParishionerAdditionalInfo(idParishioner);
                 HashMap<String, Object> allParishionersDetails = new HashMap<>();
                 allParishionersDetails.put("parishionerBaseInfo", parishionerBaseInfo);
+                allParishionersDetails.put("memberships", meetingService.getMembershipsOfPartecipant(idParishioner));
+                allParishionersDetails.put("partecipations", meetingService.getMeetingsOfParishioner(idParishioner));
                 allParishionersDetails.put("additionalInfos", parishionerAdditionalInfo);
                 if (allParishionersDetails != null) {
                     return new ResponseEntity<>(allParishionersDetails, HttpStatus.OK);
@@ -210,6 +214,38 @@ public class ParishionerController {
         }
 
     }
+
+    @RequestMapping(value = "/holybadge/editAdditionalInfo", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> editAdditionalInfoOfSingleParishioner(@RequestBody AdditionalInfoToSingleParishionerPojo params, HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            String role = userService.authenticateCaller(request, response).getRole();
+            ParishionerAdditionalInfoPojo parishionerAdditionalInfoPojo = new ParishionerAdditionalInfoPojo();
+            parishionerAdditionalInfoPojo.setInfoValue(params.getInfoValue());
+            parishionerAdditionalInfoPojo.setInfoName(params.getInfoName());
+            if (role.equals("admin")) {
+                HashMap<String, Object> additionalInfoCreated = parishionerService.addAdditionalInfoToSingleParishioner(
+                        parishionerAdditionalInfoPojo, params.getIdParishioner());
+                if (additionalInfoCreated != null) {
+                    return new ResponseEntity<>(additionalInfoCreated, HttpStatus.CREATED);
+                } else {
+                    return new ResponseEntity<>("ERRORE DURANTE L'AGGIUNTA DELLA INFO AGGIUNTIVA SUL PARROCCHIANO " + params.getIdParishioner(), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+            } else {
+                throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
+            }
+
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
+            logger.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
+            return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 
     @RequestMapping(value = "/holybadge/removeParishionerAdditionalInfo", method = RequestMethod.DELETE)
     public ResponseEntity<Object> removeParishionerAdditionalInfo(@RequestParam("idParishioner") int idParishioner, @RequestParam("idAdditioanalInfo") int idAdditioanalInfo, HttpServletRequest request, HttpServletResponse response) {
