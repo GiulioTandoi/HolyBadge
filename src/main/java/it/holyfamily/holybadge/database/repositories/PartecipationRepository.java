@@ -21,7 +21,7 @@ public interface PartecipationRepository extends CrudRepository<Partecipation, I
 
     List<Partecipation> findByIdParishionerAndIdMeetingAndPartecipatedNull(int idParishioner, int idMeeting, Pageable firstOne);
 
-    @Query(value = "SELECT * FROM partecipation part LEFT JOIN meeting m ON part.idMeeting = m.id WHERE part.idParishioner = :idParishioner AND m.date < :exitTime AND m.date > :entranceTime", nativeQuery = true)
+    @Query(value = "SELECT part.idMeeting FROM partecipation part LEFT JOIN meeting m ON part.idMeeting = m.id WHERE part.idParishioner = :idParishioner AND m.date < :exitTime AND m.date > :entranceTime", nativeQuery = true)
     List<Integer> getAllMeetingsIdBeforeExit(int idParishioner, LocalDateTime exitTime, LocalDateTime entranceTime);
 
 }

@@ -116,7 +116,7 @@ public class ParishionerService {
             partecipationRepository.save(partecipation);
 
         } catch (Exception ex) {
-            log.info("ERRORE DURANTE IL SALVATAGGIO DEL MOVIMENTO DI USCITA DEL PARISHIONER " + idParishioner);
+            log.error("ERRORE DURANTE IL SALVATAGGIO DEL MOVIMENTO DI USCITA DEL PARISHIONER " + idParishioner, ex);
             ex.printStackTrace();
             return false;
         }
@@ -135,6 +135,7 @@ public class ParishionerService {
             for (InOutParish inOutParish : inOutParishMovements) {
                 singleMovement = new HashMap<>();
                 Optional<Parishioner> parishioner = parishionerRepository.findById(inOutParish.getIdParishioner());
+                log.info("Id parishioner " + inOutParish.getIdParishioner() + " e parishioner recuperato " + parishioner);
                 if (parishioner.isPresent()) {
 
                     singleMovement.put("idParishioner", inOutParish.getIdParishioner());
@@ -144,13 +145,13 @@ public class ParishionerService {
                     singleMovement.put("surname", parishioner.get().getSurname());
                     allMovements.add(singleMovement);
                 } else {
-                    return null;
+                    throw new Exception(String.valueOf(parishioner.get()));
                 }
 
             }
             return allMovements;
         } catch (Exception ex) {
-            log.info("Errore durante recupero della lista degli ultimi 20 movmenti di ingresso uscita dalla parrocchia");
+            log.error("Errore durante recupero della lista degli ultimi 100 movmenti di ingresso uscita dalla parrocchia", ex);
             return null;
         }
     }
@@ -162,7 +163,7 @@ public class ParishionerService {
             return (List<Parishioner>) parishionerRepository.findAll();
 
         } catch (Exception ex) {
-            log.info("Errore durante recupero della lista degli ultimi 20 movmenti di ingresso uscita dalla parrocchia");
+            log.error("Errore durante recupero della lista degli ultimi 20 movmenti di ingresso uscita dalla parrocchia", ex);
             ex.printStackTrace();
             return null;
         }

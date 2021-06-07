@@ -1,6 +1,7 @@
 package it.holyfamily.holybadge.pojos;
 
 import it.holyfamily.holybadge.entities.Parishioner;
+import org.apache.tomcat.jni.Local;
 
 import java.time.LocalDateTime;
 
@@ -8,25 +9,13 @@ public class PartecipantPojo {
 
     // Questa classe contiene i dati con cui si identifica univocamente il parrocchiano e lo si può aggiungere all'incontro
     private Integer idMeeting;
-    private Integer idParishioner;
-    private String name;
-    private String surname;
-    private LocalDateTime birthDate;
+    private Parishioner parishioner;
+    private LocalDateTime partecipation;
 
-    public PartecipantPojo(Parishioner parishioner){
-        this.idParishioner = parishioner.getId();
-        this.name = parishioner.getName();
-        this.surname = parishioner.getSurname();
-        this.birthDate = parishioner.getDataNascita();
-    }
-
-
-    public Integer getIdParishioner() {
-        return idParishioner;
-    }
-
-    public void setIdParishioner(Integer idParishioner) {
-        this.idParishioner = idParishioner;
+    public PartecipantPojo(Parishioner parishioner, int idMeeting, LocalDateTime partecipation){
+        this.parishioner = parishioner;
+        this.idMeeting = idMeeting;
+        this.partecipation = partecipation;
     }
 
     public Integer getIdMeeting() {
@@ -37,28 +26,21 @@ public class PartecipantPojo {
         this.idMeeting = idMeeting;
     }
 
-    public String getName() {
-        return name;
+    public Parishioner getParishioner() {
+        return parishioner;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setParishioner(Parishioner parishioner) {
+        this.parishioner = parishioner;
     }
 
-    public String getSurname() {
-        return surname;
+    public LocalDateTime getPartecipation() {
+        return partecipation;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setPartecipation(LocalDateTime partecipation) {
+        this.partecipation = partecipation;
     }
 
-    public LocalDateTime getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDateTime birthDate) {
-        this.birthDate = birthDate;
-    }
 
 }

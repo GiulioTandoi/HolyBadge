@@ -1,8 +1,6 @@
 package it.holyfamily.holybadge.controllers;
 
-import it.holyfamily.holybadge.entities.Group;
 import it.holyfamily.holybadge.entities.Meeting;
-import it.holyfamily.holybadge.entities.Parishioner;
 import it.holyfamily.holybadge.pojos.*;
 import it.holyfamily.holybadge.structuralservices.MeetingService;
 import it.holyfamily.holybadge.structuralservices.UserService;
@@ -66,11 +64,11 @@ public class MeetingController {
             String role = userService.authenticateCaller(request, response).getRole();
 
             if (role.equals("admin")) {
-                List<Parishioner> partecipants = meetingService.getMeetingPartecipants(idMeeting);
+                List<PartecipantPojo> partecipants = meetingService.getMeetingPartecipants(idMeeting);
                 HashMap <String, Object> partecipantsDetails = null;
-                for (Parishioner parishioner: partecipants){
-                    partecipantsDetails.put("partecipant", parishioner);
-                    partecipantsDetails.put("memberships", meetingService.getMembershipsOfPartecipant(parishioner.getId()));
+                for (PartecipantPojo partecipant: partecipants){
+                    partecipantsDetails.put("partecipant", partecipant);
+                    partecipantsDetails.put("memberships", meetingService.getMembershipsOfPartecipant(partecipant.getParishioner().getId()));
                 }
 
                 if (partecipantsDetails != null) {
@@ -206,9 +204,9 @@ public class MeetingController {
 
     }
 
-    @RequestMapping(value = "/holybadge/addParishionersToMeeting", method = RequestMethod.POST)
+    @RequestMapping(value = "/holybadge/addParishionerToMeeting", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> addParishionerToMeeting(@RequestBody PartecipantPojo param, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Object> addParishionerToMeeting(@RequestBody ParishionerToMeetingPojo param, HttpServletRequest request, HttpServletResponse response) {
 
         try {
             String role = userService.authenticateCaller(request, response).getRole();

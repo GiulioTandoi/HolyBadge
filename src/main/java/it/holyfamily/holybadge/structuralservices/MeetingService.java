@@ -8,10 +8,8 @@ import it.holyfamily.holybadge.pojos.PartecipationPojo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +41,7 @@ public class MeetingService {
         //Pageable firstElements = Pageable.ofSize(numElements);
         try {
 //            meetings = meetingRepository.findAllByOrderByDateDesc(firstElements);
-            meetings = meetingRepository.findAllByOrderByDateDescGreaterThen(LocalDateTime.now());
+            meetings = meetingRepository.findAllByOrderByDateDesc();
         } catch (Exception ex) {
             logger.error("ERRORE DURANTE IL RECUPERO LA LISTA DI INCONTRI", ex);
         }
@@ -51,13 +49,21 @@ public class MeetingService {
         return meetings;
     }
 
-    public List<Parishioner> getMeetingPartecipants(int idMeeting) {
+    public List<PartecipantPojo> getMeetingPartecipants(int idMeeting) {
 
-        List<Parishioner> partecipants = null;
+        List<PartecipantPojo> partecipants = null;
 
         try {
 
-            partecipants = parishionerRepository.getAllMeetingPartecipants(idMeeting);
+            List <Parishioner> parishionersList = parishionerRepository.getAllMeetingPartecipants(idMeeting);
+
+            Partecipation partecipation ;
+            PartecipantPojo partecipantPojo;
+            for (Parishioner parishioner: parishionersList){
+                partecipation = partecipationRepository.findByIdParishionerAndIdMeeting(parishioner.getId(), idMeeting);
+                partecipantPojo = new PartecipantPojo(parishioner, idMeeting, partecipation.getPartecipated());
+                partecipants.add(partecipantPojo);
+            }
 
         } catch (Exception ex) {
             logger.error("ERRORE DURANTE IL RECUPERO DEI PARTECIPANTI ALL'INCONTRO " + idMeeting, ex);
@@ -168,7 +174,7 @@ public class MeetingService {
             for (Parishioner parishioner : allParishioners){
 
                 if (!pars.contains(parishioner.getId())){
-                    notPartecipants.add(new PartecipantPojo(parishioner));
+                    notPartecipants.add(new PartecipantPojo(parishioner, idMeeting, null));
                 }
 
             }
