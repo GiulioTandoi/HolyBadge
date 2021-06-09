@@ -20,9 +20,10 @@ public class Parishioner {
     @Nullable
     private String secondPhone;
     private LocalDateTime dataNascita;
+    @Nullable
     private String allergiePatologie;
+    @Nullable
     private String tagliaMaglietta;
-
     @Nullable
     private String note;
 

@@ -85,8 +85,8 @@ public class GroupService {
 
     public List<ParishionersOfGroup> getGroupMembers(int idGroup) {
 
-        List<Parishioner> members = null;
-        List<Parishioner> notMemebrs = null;
+        List<Parishioner> members;
+        List<Parishioner> notMemebrs;
         List<ParishionersOfGroup> parishioners = new ArrayList<>();
         try {
 

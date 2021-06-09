@@ -83,7 +83,7 @@ public class ParishionerService {
                         partecipation.setPartecipated(inOutParish.getEntranceTime());
                         partecipationRepository.save(partecipation);
                     }
-                    log.info("PARTECIPAZIONI A CUI IL PARROCCHIANO HA PARTECIPATO PRIA DI USCIRE " + scheduledMeetingsId.size());
+                    log.info("PARTECIPAZIONI A CUI IL PARROCCHIANO HA PARTECIPATO PRIMA DI USCIRE " + scheduledMeetingsId.size());
                 } catch (Exception ex) {
                     log.error("ERRORE DURANTE IL SETTAGIO DELLE PARTECIPAZIONI DEL PARROCCHIANO", ex);
                 }

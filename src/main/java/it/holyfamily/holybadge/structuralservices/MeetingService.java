@@ -51,7 +51,7 @@ public class MeetingService {
 
     public List<PartecipantPojo> getMeetingPartecipants(int idMeeting) {
 
-        List<PartecipantPojo> partecipants = null;
+        List<PartecipantPojo> partecipants = new ArrayList<>();
 
         try {
 
@@ -107,7 +107,7 @@ public class MeetingService {
 
         try {
             List<Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(groupName);
-            List<Partecipation> partecipations = null;
+            List<Partecipation> partecipations = new ArrayList<>();
             Partecipation partecipation;
             for (Parishioner parishioner : parishionersOfGroup) {
                 partecipation = new Partecipation();
@@ -221,7 +221,7 @@ public class MeetingService {
 
         try {
 
-            List<Partecipation> partecipationsToBeDeleted = null;
+            List<Partecipation> partecipationsToBeDeleted = new ArrayList<>();
             List<Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(idGroup);
 
             for (Parishioner parishioner : parishionersOfGroup) {

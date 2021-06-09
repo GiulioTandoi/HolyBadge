@@ -4,6 +4,7 @@ import it.holyfamily.holybadge.entities.Meeting;
 import it.holyfamily.holybadge.pojos.*;
 import it.holyfamily.holybadge.structuralservices.MeetingService;
 import it.holyfamily.holybadge.structuralservices.UserService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
 @RestController
 @CrossOrigin(maxAge = 3600, allowedHeaders = "*")
@@ -49,9 +49,10 @@ public class MeetingController {
             }
 
         } catch (UsernameNotFoundException | BadCredentialsException unfe) {
-            logger.info("CHIAMATA NON AUTORIZZATA");
+            logger.error("CHIAMATA NON AUTORIZZATA ", unfe );
             return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
         } catch (NullPointerException npe) {
+            logger.error("ERRORE ", npe);
             return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
         }
 
@@ -65,7 +66,7 @@ public class MeetingController {
 
             if (role.equals("admin")) {
                 List<PartecipantPojo> partecipants = meetingService.getMeetingPartecipants(idMeeting);
-                HashMap <String, Object> partecipantsDetails = null;
+                HashMap <String, Object> partecipantsDetails = new HashMap<>();
                 for (PartecipantPojo partecipant: partecipants){
                     partecipantsDetails.put("partecipant", partecipant);
                     partecipantsDetails.put("memberships", meetingService.getMembershipsOfPartecipant(partecipant.getParishioner().getId()));
@@ -82,9 +83,10 @@ public class MeetingController {
             }
 
         } catch (UsernameNotFoundException | BadCredentialsException unfe) {
-            logger.info("CHIAMATA NON AUTORIZZATA");
+            logger.error("CHIAMATA NON AUTORIZZATA", unfe);
             return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
         } catch (NullPointerException npe) {
+            logger.error("ERRORE NEL GETMEETINGPARTECIPANTS", npe);
             return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
         }
 
