@@ -230,7 +230,7 @@ public class ParishionerController {
                 if (additionalInfoCreated != null) {
                     return new ResponseEntity<>(additionalInfoCreated, HttpStatus.CREATED);
                 } else {
-                    return new ResponseEntity<>("ERRORE DURANTE L'AGGIUNTA DELLA INFO AGGIUNTIVA SUL PARROCCHIANO " + params.getIdParishioner(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>("ERRORE DURANTE LA MODIFICA DELLA INFO AGGIUNTIVA SUL PARROCCHIANO " + params.getIdParishioner(), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
             } else {

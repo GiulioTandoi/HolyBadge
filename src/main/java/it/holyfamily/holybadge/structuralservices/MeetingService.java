@@ -3,6 +3,7 @@ package it.holyfamily.holybadge.structuralservices;
 import it.holyfamily.holybadge.database.repositories.*;
 import it.holyfamily.holybadge.entities.*;
 import it.holyfamily.holybadge.pojos.MeetingPojo;
+import it.holyfamily.holybadge.pojos.MembershipPojo;
 import it.holyfamily.holybadge.pojos.PartecipantPojo;
 import it.holyfamily.holybadge.pojos.PartecipationPojo;
 import org.apache.log4j.Logger;
@@ -29,11 +30,20 @@ public class MeetingService {
     @Autowired
     ParishionerRepository parishionerRepository;
 
-    @Qualifier("it.holyfamily.holybadge.database.repositories.MembershipRepository")
+    @Qualifier("it.holyfamily.holybadge.database.repositories.GroupRepository")
     @Autowired
-    MembershipRepository membershipRepository;
+    GroupRepository groupRepository;
 
     private static final Logger logger = Logger.getLogger(MeetingService.class);
+
+    public Meeting getMeetingDetails(int idMeeting){
+        try{
+            return meetingRepository.findById(idMeeting).get();
+        }catch (Exception ex ){
+            logger.error("ERRORE DURANTE IL RECUPERO DEI DETTAGLI DELL'INCONTRO", ex);
+        }
+        return null;
+    }
 
     public List<Meeting> getMeetingsList() {
 
@@ -129,17 +139,26 @@ public class MeetingService {
         try {
 
             List <PartecipationPojo> partecipationsList = new ArrayList<>();
-            List <Partecipation> partecipations = partecipationRepository.findAllByIdParishioner(idParishioner);
-            Meeting meeting;
+            List <Meeting> parishionerPartecipations = meetingRepository.getAllParishionerPartecipations(idParishioner);
+            List <Meeting> all = (List<Meeting>) meetingRepository.findAll();
             PartecipationPojo partecipationPojo;
-            for (Partecipation partecipation : partecipations){
-                meeting = meetingRepository.findById(partecipation.getIdMeeting()).get();
+            for (Meeting meeting : all){
                 partecipationPojo = new PartecipationPojo();
-                partecipationPojo.setPartecipation(partecipation.getPartecipated());
-                partecipationPojo.setMeetingName(meeting.getMeetingName());
-                partecipationPojo.setMeetingDate(meeting.getDate());
-                partecipationPojo.setMeetingLocation(meeting.getLocation());
-                partecipationsList.add(partecipationPojo);
+                if (parishionerPartecipations.contains(meeting)){
+
+                    partecipationPojo.setPartecipation(partecipationRepository.findByIdParishionerAndIdMeeting(idParishioner, meeting.getId()).getPartecipated());
+                    partecipationPojo.setMeetingName(meeting.getMeetingName());
+                    partecipationPojo.setMeetingDate(meeting.getDate());
+                    partecipationPojo.setMeetingLocation(meeting.getLocation());
+                    partecipationPojo.setIdMeeting(meeting.getId());
+                    partecipationsList.add(partecipationPojo);
+                }else{
+                    partecipationPojo.setMeetingName(meeting.getMeetingName());
+                    partecipationPojo.setMeetingDate(meeting.getDate());
+                    partecipationPojo.setMeetingLocation(meeting.getLocation());
+                    partecipationPojo.setIdMeeting(meeting.getId());
+                    partecipationsList.add(partecipationPojo);
+                }
             }
 
             return partecipationsList;
@@ -151,11 +170,24 @@ public class MeetingService {
 
     }
 
-    public List<String> getMembershipsOfPartecipant (int idParishioner){
+    public List<MembershipPojo> getMembershipsOfPartecipant (int idParishioner){
 
         try{
 
-            return membershipRepository.getGroupNamesOfParishioner(idParishioner);
+            List<MembershipPojo> completedList = new ArrayList<>();
+            List<Group> all = groupRepository.findAll();
+            List<Group> memberships = groupRepository.getGroupNamesOfParishioner(idParishioner);
+            for(Group g: all){
+                if (memberships.contains(g)){
+                    logger.info("Membership contiene " + g.getName());
+                    completedList.add(new MembershipPojo(g, true));
+                }else{
+                    completedList.add(new MembershipPojo(g, false));
+                }
+
+            }
+
+            return completedList;
 
         }catch (Exception ex){
             logger.error("ERRORE DURANTE IL RECUPERO DEI GRUPPI DI APPARTENENZA DEL PARROCCHIANO " + idParishioner,ex);

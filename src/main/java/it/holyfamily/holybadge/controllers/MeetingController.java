@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,6 +29,33 @@ public class MeetingController {
     MeetingService meetingService;
 
     private static final Logger logger = Logger.getLogger(MeetingController.class.getName());
+
+    @GetMapping(value = "/holybadge/meetingDetails")
+    public ResponseEntity<Object> getMeetingDetails(@RequestParam(value = "idMeeting") int idMeeting, HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            String role = userService.authenticateCaller(request, response).getRole();
+
+            if (role.equals("admin")) {
+                Meeting meeting = meetingService.getMeetingDetails(idMeeting);
+                if (meeting != null) {
+                    return new ResponseEntity<>(meeting, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("ERRORE DURANTE RECUPERO DETTAGLI DELL'INCONTRO " + idMeeting, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+            } else {
+                throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
+            }
+
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
+            logger.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
+            return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
+        }
+
+    }
 
     @GetMapping(value = "/holybadge/meetings")
     public ResponseEntity<Object> getMeetingsList(HttpServletRequest request, HttpServletResponse response) {
@@ -66,14 +94,18 @@ public class MeetingController {
 
             if (role.equals("admin")) {
                 List<PartecipantPojo> partecipants = meetingService.getMeetingPartecipants(idMeeting);
-                HashMap <String, Object> partecipantsDetails = new HashMap<>();
+                List<HashMap <String, Object>> meetingPartecipants = new ArrayList();
+                HashMap <String, Object> partecipantsDetails;
                 for (PartecipantPojo partecipant: partecipants){
+                    partecipantsDetails = new HashMap<>();
                     partecipantsDetails.put("partecipant", partecipant);
                     partecipantsDetails.put("memberships", meetingService.getMembershipsOfPartecipant(partecipant.getParishioner().getId()));
+
+                    meetingPartecipants.add(partecipantsDetails);
                 }
 
-                if (partecipantsDetails != null) {
-                    return new ResponseEntity<>(partecipantsDetails, HttpStatus.OK);
+                if (meetingPartecipants != null) {
+                    return new ResponseEntity<>(meetingPartecipants, HttpStatus.OK);
                 } else {
                     return new ResponseEntity<>("ERRORE DURANTE RECUPERO PARTECIPANTI", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
@@ -220,7 +252,7 @@ public class MeetingController {
                 if (added) {
                     return new ResponseEntity<>(true, HttpStatus.OK);
                 } else {
-                    return new ResponseEntity<>("ERRORE DURANTE RECUPERO PARTECIPANTI", HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>("ERRORE DURANTE L'AGGIUNTA DEL PARROCCHIANO " + param.getIdParishioner() + " ALL'INCONTRO " + param.getIdMeeting(), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
             } else {

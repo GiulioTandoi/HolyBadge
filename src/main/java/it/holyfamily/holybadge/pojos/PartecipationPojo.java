@@ -41,5 +41,15 @@ public class PartecipationPojo {
     private LocalDateTime meetingDate;
     private LocalDateTime partecipation;
 
+    public Integer getIdMeeting() {
+        return idMeeting;
+    }
+
+    public void setIdMeeting(Integer idMeeting) {
+        this.idMeeting = idMeeting;
+    }
+
+    private Integer idMeeting;
+
 
 }

@@ -1,8 +1,10 @@
 package it.holyfamily.holybadge.controllers;
 
 import it.holyfamily.holybadge.entities.Group;
+import it.holyfamily.holybadge.entities.Meeting;
 import it.holyfamily.holybadge.pojos.AddParsToGroupPojo;
 import it.holyfamily.holybadge.pojos.GroupPojo;
+import it.holyfamily.holybadge.pojos.ParishionerToGroupPojo;
 import it.holyfamily.holybadge.pojos.ParishionersOfGroup;
 import it.holyfamily.holybadge.structuralservices.GroupService;
 import it.holyfamily.holybadge.structuralservices.UserService;
@@ -29,6 +31,33 @@ public class GroupsController {
     GroupService groupsService;
 
     private static final Logger logger = Logger.getLogger(GroupsController.class.getName());
+
+    @GetMapping(value = "/holybadge/groupDetails")
+    public ResponseEntity<Object> getGroupDetails(@RequestParam(value = "idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            String role = userService.authenticateCaller(request, response).getRole();
+
+            if (role.equals("admin")) {
+                Group group = groupsService.getGroupDetails(idGroup);
+                if (group != null) {
+                    return new ResponseEntity<>(group, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("ERRORE DURANTE RECUPERO DETTAGLI DEL GRUPPO " + idGroup, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+            } else {
+                throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
+            }
+
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
+            logger.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
+            return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
+        }
+
+    }
 
     @GetMapping(value = "/holybadge/groups")
     public ResponseEntity<Object> getGroupsList(HttpServletRequest request, HttpServletResponse response) {
@@ -172,6 +201,37 @@ public class GroupsController {
         }
 
     }
+
+    @RequestMapping(value = "/holybadge/addParishionerToGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> addParishionerToGroup(@RequestBody ParishionerToGroupPojo param, HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            String role = userService.authenticateCaller(request, response).getRole();
+
+            if (role.equals("admin")) {
+                // Qui ho direttamente l'oggetto meeting al quale devo aggiungere il gruppo, quest'oggetto me lo passa il frontend (ad esempio dopo averlo selezionato
+                // con getMeetingsList)
+                boolean added = groupsService.addParishionerToGroup(param.getIdParishioner(), param.getIdGroup());
+                if (added) {
+                    return new ResponseEntity<>(true, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("ERRORE DURANTE L'AGGIUNTA DEL PARROCCHIANO " + param.getIdParishioner() + " AL GRUPPO " + param.getIdGroup(), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+            } else {
+                throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
+            }
+
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
+            logger.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
+            return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 
     @RequestMapping(value = "/holybadge/removeParishionerFromGroup", method = RequestMethod.DELETE)
     public ResponseEntity<Object> removeParishionerFromGroup(@RequestParam("idParishioner") int idParishioner, @RequestParam("idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response) {

@@ -4,6 +4,7 @@ import it.holyfamily.holybadge.database.repositories.GroupRepository;
 import it.holyfamily.holybadge.database.repositories.MembershipRepository;
 import it.holyfamily.holybadge.database.repositories.ParishionerRepository;
 import it.holyfamily.holybadge.entities.Group;
+import it.holyfamily.holybadge.entities.Meeting;
 import it.holyfamily.holybadge.entities.Membership;
 import it.holyfamily.holybadge.entities.Parishioner;
 import it.holyfamily.holybadge.pojos.GroupPojo;
@@ -34,6 +35,16 @@ public class GroupService {
     GroupRepository groupsRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(MeetingService.class);
+
+    public Group getGroupDetails(int idGroup){
+        try{
+            return groupsRepository.findById(idGroup).get();
+        }catch (Exception ex ){
+            logger.error("ERRORE DURANTE IL RECUPERO DEI DETTAGLI DEL GRUPPO", ex);
+        }
+        return null;
+    }
+
 
     public List<Group> getGroupsList() {
 
@@ -125,6 +136,23 @@ public class GroupService {
 
         }catch (Exception ex) {
             logger.error("ERRORE DURANTE L'AGGIUNTA DELLA LISTA DEI PARROCCHIANI AL GFRUPPO " + idGroup, ex);
+            return false;
+        }
+
+        return true;
+
+    }
+
+    public boolean addParishionerToGroup(Integer idParishioner, int idGroup) {
+
+        Membership membership;
+        try {
+            membership = new Membership();
+            membership.setIdParishioner(idParishioner);
+            membership.setIdGroup(idGroup);
+            membershipRepository.save(membership);
+        }catch (Exception ex) {
+            logger.error("ERRORE DURANTE L'AGGIUNTA DEL PARROCCHIANO AL GFRUPPO " + idGroup, ex);
             return false;
         }
 

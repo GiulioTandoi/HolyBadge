@@ -1,7 +1,9 @@
 package it.holyfamily.holybadge.database.repositories;
 
 import it.holyfamily.holybadge.entities.Meeting;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,5 +12,8 @@ import java.util.List;
 public interface MeetingRepository extends CrudRepository<Meeting, Integer> {
 
     List<Meeting> findAllByOrderByDateDesc();
+
+    @Query(value = "SELECT m.id, m.date, m.location, m.meetingName FROM meeting m LEFT JOIN partecipation p ON p.idMeeting = m.id WHERE p.idParishioner = :idParishioner", nativeQuery = true)
+    List <Meeting> getAllParishionerPartecipations(@Param("idParishioner") int idParishioner);
 
 }
