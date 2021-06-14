@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +32,10 @@ public class ParishionerService {
     @Autowired
     @Qualifier("it.holyfamily.holybadge.database.repositories.PartecipationRepository")
     private PartecipationRepository partecipationRepository;
+
+    @Autowired
+    @Qualifier("it.holyfamily.holybadge.database.repositories.MembershipRepository")
+    private MembershipRepository membershipRepository;
 
     @Autowired
     @Qualifier("it.holyfamily.holybadge.database.repositories.ParishionerAdditionalInfoRepository")
@@ -264,6 +267,26 @@ public class ParishionerService {
             parishionerCreated = parishionerRepository.save(parishionerCreated);
         } catch (Exception ex) {
             log.error("ERRORE DURANTE LA CREAZIONE DEL PARROCCHIANO " + parishionerPojo.getName(), ex);
+        }
+
+        try{
+            Partecipation partecipation;
+            for (int idMeeting : parishionerPojo.getPartecipations()){
+                partecipation = new Partecipation();
+                partecipation.setIdParishioner(parishionerCreated.getId());
+                partecipation.setIdMeeting(idMeeting);
+                partecipationRepository.save(partecipation);
+            }
+
+            Membership membership;
+            for (int idGroup : parishionerPojo.getMemberships()){
+                membership = new Membership();
+                membership.setIdGroup(idGroup);
+                membership.setIdParishioner(parishionerCreated.getId());
+                membershipRepository.save(membership);
+            }
+        }catch(Exception ex){
+            log.error("ERRORE DURANTE L?ASSOCIAZIONE DEL NUOVO PARROCCHIANO AI GRUPPI O AI MEETING", ex);
         }
 
         return parishionerCreated;

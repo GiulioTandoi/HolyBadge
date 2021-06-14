@@ -219,13 +219,14 @@ public class MeetingService {
 
     }
 
-    public boolean addSingleParishionerToMeeting(Integer idParishioner, int idMeeting) {
+    public boolean addSingleParishionerToMeeting(int idParishioner, int idMeeting) {
 
         Partecipation partecipation;
         try {
             partecipation = new Partecipation();
             partecipation.setIdParishioner(idParishioner);
             partecipation.setIdMeeting(idMeeting);
+            partecipationRepository.save(partecipation);
 
         }catch (Exception ex) {
             logger.error("ERRORE DURANTE L'AGGIUNTA DEL PARROCCHIANO al meeting " + idMeeting, ex);
