@@ -276,6 +276,7 @@ public class ParishionerService {
                 partecipation.setIdParishioner(parishionerCreated.getId());
                 partecipation.setIdMeeting(idMeeting);
                 partecipationRepository.save(partecipation);
+                log.info("Salvo partecipazione a incontro " + partecipation.getIdMeeting() + " del parrocchiano " + partecipation.getIdParishioner());
             }
 
             Membership membership;
@@ -284,9 +285,10 @@ public class ParishionerService {
                 membership.setIdGroup(idGroup);
                 membership.setIdParishioner(parishionerCreated.getId());
                 membershipRepository.save(membership);
+                log.info("Salvo appartenenza a gruppo " + membership.getIdGroup() + " del parrocchiano  " + membership.getIdParishioner());
             }
         }catch(Exception ex){
-            log.error("ERRORE DURANTE L?ASSOCIAZIONE DEL NUOVO PARROCCHIANO AI GRUPPI O AI MEETING", ex);
+            log.error("ERRORE DURANTE L'ASSOCIAZIONE DEL NUOVO PARROCCHIANO AI GRUPPI O AI MEETING", ex);
         }
 
         return parishionerCreated;
@@ -306,8 +308,14 @@ public class ParishionerService {
     }
 
     public boolean removeParishioner(int idParishioner) {
-        return true;
 
+        try{
+            parishionerRepository.delete(parishionerRepository.findById(idParishioner).get());
+        }catch(Exception ex){
+            log.error("ERRORE DURANTE LA RIMOZIONE DEL PARROCCHIANO " + idParishioner, ex);
+        }
+
+        return true;
     }
 
     public Parishioner modifyParishioner(Parishioner parishioner) {

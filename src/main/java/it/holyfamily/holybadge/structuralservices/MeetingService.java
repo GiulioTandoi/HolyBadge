@@ -152,13 +152,9 @@ public class MeetingService {
                     partecipationPojo.setMeetingLocation(meeting.getLocation());
                     partecipationPojo.setIdMeeting(meeting.getId());
                     partecipationsList.add(partecipationPojo);
-                }else{
-                    partecipationPojo.setMeetingName(meeting.getMeetingName());
-                    partecipationPojo.setMeetingDate(meeting.getDate());
-                    partecipationPojo.setMeetingLocation(meeting.getLocation());
-                    partecipationPojo.setIdMeeting(meeting.getId());
-                    partecipationsList.add(partecipationPojo);
+
                 }
+
             }
 
             return partecipationsList;
@@ -216,6 +212,17 @@ public class MeetingService {
             logger.error("ERRORE DURANTE IL RECUPERO DEI NON PARTECIPANTI ALL'INCONTRO " + idMeeting, ex);
             return null;
         }
+
+    }
+
+    public List <Meeting> getParishionerPossibleMeetings(int idParishioner){
+        List <Meeting> possibleMeetings = null;
+        try{
+            possibleMeetings = meetingRepository.getAllPossibleMeetingsForParishioner(idParishioner);
+        }catch(Exception ex){
+            logger.error("ERRORE DURANTE IL RECUPERO DEI MEETING DISPONIBILI PER IL PARROCCHIANO " + idParishioner, ex);
+        }
+        return possibleMeetings;
 
     }
 

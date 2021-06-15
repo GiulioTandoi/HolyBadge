@@ -238,6 +238,34 @@ public class MeetingController {
 
     }
 
+    @GetMapping(value = "/holybadge/parishionerPossibleMeetings")
+    public ResponseEntity<Object> getParishionerPossibleMeetings(@RequestParam("idParishioner") int idParishioner, HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            String role = userService.authenticateCaller(request, response).getRole();
+
+            if (role.equals("admin")) {
+                List<Meeting> possibleMeetings = meetingService.getParishionerPossibleMeetings(idParishioner);
+
+                if (possibleMeetings != null) {
+                    return new ResponseEntity<>(possibleMeetings, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("ERRORE DURANTE RECUPERO DELLA LISTA DEGLI INCONTRI A CUI SI PUO' AGGIUNGERE IL PARROCCHIANO " + idParishioner, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+            } else {
+                throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
+            }
+
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
+            logger.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
+            return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     @RequestMapping(value = "/holybadge/addParishionerToMeeting", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> addParishionerToMeeting(@RequestBody ParishionerToMeetingPojo param, HttpServletRequest request, HttpServletResponse response) {
