@@ -1,10 +1,10 @@
 package it.holyfamily.holybadge.structuralservices;
 
 import it.holyfamily.holybadge.database.repositories.GroupRepository;
+
 import it.holyfamily.holybadge.database.repositories.MembershipRepository;
 import it.holyfamily.holybadge.database.repositories.ParishionerRepository;
 import it.holyfamily.holybadge.entities.Group;
-import it.holyfamily.holybadge.entities.Meeting;
 import it.holyfamily.holybadge.entities.Membership;
 import it.holyfamily.holybadge.entities.Parishioner;
 import it.holyfamily.holybadge.pojos.GroupPojo;
@@ -97,7 +97,6 @@ public class GroupService {
     public List<ParishionersOfGroup> getGroupMembers(int idGroup) {
 
         List<Parishioner> members;
-        List<Parishioner> notMemebrs;
         List<ParishionersOfGroup> parishioners = new ArrayList<>();
         try {
 
@@ -107,12 +106,32 @@ public class GroupService {
                 ofGroup = new ParishionersOfGroup(parishioner, true);
                 parishioners.add(ofGroup);
             }
-            notMemebrs = parishionerRepository.getNotGroupMemebers(idGroup);
+            
+        } catch (Exception ex) {
+
+            logger.info("ERRORE DURANTE IL RECUPERO DEI MEMBRI DEL GRUPPO " + idGroup, ex);
+            return null;
+        }
+
+        return parishioners;
+
+    }
+    
+    public List<ParishionersOfGroup> getGroupNotMembers(int idGroup) {
+
+        List<Parishioner> members;
+        List<ParishionersOfGroup> parishioners = new ArrayList<>();
+        try {
+
+            members = parishionerRepository.getAllGroupMembers(idGroup);
+            List <Parishioner> allNotMembers = (List<Parishioner>) parishionerRepository.findAll();
+            allNotMembers.removeAll(members);
             ParishionersOfGroup notOfGroup;
-            for (Parishioner parishioner: notMemebrs){
-                notOfGroup = new ParishionersOfGroup(parishioner, false);
+            for (Parishioner parishioner: allNotMembers){
+            	notOfGroup = new ParishionersOfGroup(parishioner, true);
                 parishioners.add(notOfGroup);
             }
+            
         } catch (Exception ex) {
 
             logger.info("ERRORE DURANTE IL RECUPERO DEI MEMBRI DEL GRUPPO " + idGroup, ex);

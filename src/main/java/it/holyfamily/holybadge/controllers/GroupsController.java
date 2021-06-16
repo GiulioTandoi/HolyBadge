@@ -1,7 +1,7 @@
 package it.holyfamily.holybadge.controllers;
 
 import it.holyfamily.holybadge.entities.Group;
-import it.holyfamily.holybadge.entities.Meeting;
+
 import it.holyfamily.holybadge.pojos.AddParsToGroupPojo;
 import it.holyfamily.holybadge.pojos.GroupPojo;
 import it.holyfamily.holybadge.pojos.ParishionerToGroupPojo;
@@ -99,7 +99,35 @@ public class GroupsController {
                 if (members != null) {
                     return new ResponseEntity<>(members, HttpStatus.OK);
                 } else {
-                    return new ResponseEntity<>("ERRORE DURANTE RECUPERO PARTECIPANTI", HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>("ERRORE DURANTE RECUPERO MEMBRI DEL GRUPPO " + idGroup, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+            } else {
+                throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
+            }
+
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
+            logger.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
+            return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    
+    @GetMapping(value = "/holybadge/groupsNotMembers")
+    public ResponseEntity<Object> getGroupNotMembers(@RequestParam(value = "idGroup") int idGroup, HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            String role = userService.authenticateCaller(request, response).getRole();
+
+            if (role.equals("admin")) {
+                List<ParishionersOfGroup> notMembers = groupsService.getGroupNotMembers(idGroup);
+
+                if (notMembers != null) {
+                    return new ResponseEntity<>(notMembers, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("ERRORE DURANTE RECUPERO DEI NON MEMBRI AL GRUPPO "+ idGroup, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
             } else {

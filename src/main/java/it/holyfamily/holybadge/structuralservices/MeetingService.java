@@ -34,6 +34,13 @@ public class MeetingService {
     @Autowired
     GroupRepository groupRepository;
 
+    @Qualifier("it.holyfamily.holybadge.database.repositories.MembershipRepository")
+    @Autowired
+    MembershipRepository membershipRepository;
+
+    @Autowired
+    GroupService groupsService;
+
     private static final Logger logger = Logger.getLogger(MeetingService.class);
 
     public Meeting getMeetingDetails(int idMeeting){
@@ -198,21 +205,50 @@ public class MeetingService {
         try {
 
             List <Parishioner> allParishioners = (List<Parishioner>) parishionerRepository.findAll();
+            logger.info("id Meeting " + idMeeting);
             List <Integer> pars = partecipationRepository.getIdParishionersByIdMeeting(idMeeting);
+            logger.info("Partecipanti " + pars.toString());
             for (Parishioner parishioner : allParishioners){
-
+            	
+            	logger.info("Controllo id parishioner " + parishioner.getId());
                 if (!pars.contains(parishioner.getId())){
                     notPartecipants.add(new PartecipantPojo(parishioner, idMeeting, null));
                 }
 
             }
-
+            
+            
+            logger.info("Non partecipanti " + notPartecipants);
             return notPartecipants;
         }catch (Exception ex){
             logger.error("ERRORE DURANTE IL RECUPERO DEI NON PARTECIPANTI ALL'INCONTRO " + idMeeting, ex);
             return null;
         }
 
+    }
+
+    public List<Group> getAllGroupNotAdded(int idMeeting){
+        try {
+
+            List<Group> notAdded = new ArrayList<>();
+            List <Group> allGroups = groupsService.getGroupsList();
+            List <Integer> pars = partecipationRepository.getIdParishionersByIdMeeting(idMeeting);
+            List <Integer> allMembers;
+            for (Group group : allGroups){
+
+                allMembers = membershipRepository.findAllMembersIdByIdGroup(group.getId());
+                logger.info("All Members " + allMembers.toString());
+                if (!pars.containsAll(allMembers)){
+                    notAdded.add(group);
+                }
+
+            }
+
+            return notAdded;
+        }catch (Exception ex){
+            logger.error("ERRORE DURANTE IL RECUPERO DEI GRUPPI NON AGGIUNTI ALL'INCONTRO " + idMeeting, ex);
+            return null;
+        }
     }
 
     public List <Meeting> getParishionerPossibleMeetings(int idParishioner){

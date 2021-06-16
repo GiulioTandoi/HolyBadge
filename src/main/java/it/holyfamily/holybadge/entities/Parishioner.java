@@ -1,10 +1,12 @@
 package it.holyfamily.holybadge.entities;
 
 import com.sun.istack.Nullable;
+
 import it.holyfamily.holybadge.pojos.ParishionerPojo;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "parishioner")
@@ -19,7 +21,7 @@ public class Parishioner {
     private String phoneNumber;
     @Nullable
     private String secondPhone;
-    private LocalDateTime dataNascita;
+    private LocalDate dataNascita;
     @Nullable
     private String allergiePatologie;
     @Nullable
@@ -90,11 +92,11 @@ public class Parishioner {
         this.secondPhone = secondPhone;
     }
 
-    public LocalDateTime getDataNascita() {
+    public LocalDate getDataNascita() {
         return dataNascita;
     }
 
-    public void setDataNascita(LocalDateTime dataNascita) {
+    public void setDataNascita(LocalDate dataNascita) {
         this.dataNascita = dataNascita;
     }
 

@@ -1,5 +1,6 @@
 package it.holyfamily.holybadge.pojos;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class ParishionerPojo {
     private String surname;
     private String phoneNumber;
     private String secondPhone;
-    private LocalDateTime dataNascita;
+    private LocalDate dataNascita;
     private String allergiePatologie;
     private String tagliaMaglietta;
     private List<Integer> memberships;
@@ -58,11 +59,11 @@ public class ParishionerPojo {
         this.secondPhone = secondPhone;
     }
 
-    public LocalDateTime getDataNascita() {
+    public LocalDate getDataNascita() {
         return dataNascita;
     }
 
-    public void setDataNascita(LocalDateTime dataNascita) {
+    public void setDataNascita(LocalDate dataNascita) {
         this.dataNascita = dataNascita;
     }
 

@@ -1,6 +1,7 @@
 package it.holyfamily.holybadge.pojos;
 
-import com.sun.istack.Nullable;
+import java.time.LocalDate;
+
 import it.holyfamily.holybadge.entities.Parishioner;
 
 public class ParishionersOfGroup {
@@ -10,6 +11,7 @@ public class ParishionersOfGroup {
     private String surname;
     private String phoneNumber;
     private String note;
+	private LocalDate dataNascita;
     private boolean member;
 
     public ParishionersOfGroup(Parishioner parishioner, boolean membership){
@@ -18,6 +20,7 @@ public class ParishionersOfGroup {
         this.surname = parishioner.getSurname();
         this.phoneNumber = parishioner.getPhoneNumber();
         this.note = parishioner.getNote();
+        this.dataNascita = parishioner.getDataNascita();
         this.member = membership;
     }
 
@@ -60,6 +63,15 @@ public class ParishionersOfGroup {
     public void setNote(String note) {
         this.note = note;
     }
+    
+    public LocalDate getDataNascita() {
+		return dataNascita;
+	}
+
+	public void setDataNascita(LocalDate dataNascita) {
+		this.dataNascita = dataNascita;
+	}
+
 
     public boolean isMember() {
         return member;

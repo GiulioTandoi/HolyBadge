@@ -1,7 +1,9 @@
 package it.holyfamily.holybadge.controllers;
 
+import it.holyfamily.holybadge.entities.Group;
 import it.holyfamily.holybadge.entities.Meeting;
 import it.holyfamily.holybadge.pojos.*;
+import it.holyfamily.holybadge.structuralservices.GroupService;
 import it.holyfamily.holybadge.structuralservices.MeetingService;
 import it.holyfamily.holybadge.structuralservices.UserService;
 import org.apache.log4j.Logger;
@@ -217,10 +219,10 @@ public class MeetingController {
             String role = userService.authenticateCaller(request, response).getRole();
 
             if (role.equals("admin")) {
-                List<PartecipantPojo> allMeetings = meetingService.getAllNotPartecipants(idMeeting);
+                List<PartecipantPojo> notPartecipants = meetingService.getAllNotPartecipants(idMeeting);
 
-                if (allMeetings != null) {
-                    return new ResponseEntity<>(allMeetings, HttpStatus.OK);
+                if (notPartecipants != null) {
+                    return new ResponseEntity<>(notPartecipants, HttpStatus.OK);
                 } else {
                     return new ResponseEntity<>("ERRORE DURANTE RECUPERO LISTA PARROCCHIANI NON PARTECIPANTI", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
@@ -251,6 +253,34 @@ public class MeetingController {
                     return new ResponseEntity<>(possibleMeetings, HttpStatus.OK);
                 } else {
                     return new ResponseEntity<>("ERRORE DURANTE RECUPERO DELLA LISTA DEGLI INCONTRI A CUI SI PUO' AGGIUNGERE IL PARROCCHIANO " + idParishioner, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+            } else {
+                throw new BadCredentialsException("UTENTE NON AUTORIZZATO");
+            }
+
+        } catch (UsernameNotFoundException | BadCredentialsException unfe) {
+            logger.info("CHIAMATA NON AUTORIZZATA");
+            return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
+        } catch (NullPointerException npe) {
+            return new ResponseEntity<>(npe, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @GetMapping(value = "/holybadge/allGroupNotAdded")
+    public ResponseEntity<Object> getAllGroupNotAdded(@RequestParam("idMeeting") int idMeeting, HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            String role = userService.authenticateCaller(request, response).getRole();
+
+            if (role.equals("admin")) {
+                List<Group> allGroupNotAdded = meetingService.getAllGroupNotAdded(idMeeting);
+
+                if (allGroupNotAdded != null) {
+                    return new ResponseEntity<>(allGroupNotAdded, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("ERRORE DURANTE RECUPERO DELLA LISTA DEI GRUPPI NON ANCORA AGGIUNTI ALL'INCONTRO " + idMeeting, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
             } else {

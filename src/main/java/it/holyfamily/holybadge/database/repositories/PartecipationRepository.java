@@ -4,6 +4,7 @@ import it.holyfamily.holybadge.entities.Partecipation;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -14,14 +15,14 @@ public interface PartecipationRepository extends CrudRepository<Partecipation, I
 
     List<Partecipation> findAllByIdParishioner(int idMeeting);
 
-    @Query(value = "SELECT part.idParishioner FROM partecipation part", nativeQuery = true)
-    List<Integer> getIdParishionersByIdMeeting(int idMeeting);
+    @Query(value = "SELECT part.idParishioner FROM partecipation part WHERE part.idMeeting = :idMeeting", nativeQuery = true)
+    List<Integer> getIdParishionersByIdMeeting(@Param("idMeeting")int idMeeting);
 
     Partecipation findByIdParishionerAndIdMeeting(int idParishioner, int idMeeting);
 
     List<Partecipation> findByIdParishionerAndIdMeetingAndPartecipatedNull(int idParishioner, int idMeeting, Pageable firstOne);
 
     @Query(value = "SELECT part.idMeeting FROM partecipation part LEFT JOIN meeting m ON part.idMeeting = m.id WHERE part.idParishioner = :idParishioner AND m.date < :exitTime AND m.date > :entranceTime", nativeQuery = true)
-    List<Integer> getAllMeetingsIdBeforeExit(int idParishioner, LocalDateTime exitTime, LocalDateTime entranceTime);
+    List<Integer> getAllMeetingsIdBeforeExit(@Param("idParishioner") int idParishioner, @Param("exitTime") LocalDateTime exitTime, @Param("entranceTime") LocalDateTime entranceTime);
 
 }
