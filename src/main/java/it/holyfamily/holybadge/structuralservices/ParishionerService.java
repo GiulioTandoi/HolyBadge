@@ -101,7 +101,7 @@ public class ParishionerService {
         } catch (Exception ex) {
             log.error("ERRORE DURANTE IL SALVATAGGIO DEL MOVIMENTO DI USCITA DEL PARISHIONER " + idParishioner, ex);
             ex.printStackTrace();
-            return "ERRORE DURANTE IL SALVATAGGIO DEL MOVIMENTO DI USCITA DEL PARISHIONER ";
+            return "ERRORE! NON E' STATO REGISTRATO L'ACCESSO PER QUESTO PARROCCHIANO";
         }
 
         return "REGISTRAZIONE MOVIMENTO EFFETTUATA";

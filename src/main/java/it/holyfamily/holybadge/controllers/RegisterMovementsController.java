@@ -45,7 +45,7 @@ public class RegisterMovementsController {
             return new ResponseEntity<>("REGISTRAZIONE MOVIMENTO EFFETTUATA", HttpStatus.CREATED);
         } else {
 
-            return new ResponseEntity<>("ERRORE DURANTE LA REGISTRAZIONE DEL MOVIMENTO", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("OPS! QUALCOSA E' ANDATO STORTO, RIPROVA!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -60,8 +60,9 @@ public class RegisterMovementsController {
             return new ResponseEntity<>(unfe, HttpStatus.UNAUTHORIZED);
         }
         String result = parishionerService.registerExit(idParishioner, LocalDateTime.now());
-        if (!result.equals("REGISTRAZIONE MOVIMENTO EFFETTUATA")) {
-            return new ResponseEntity<>(result, HttpStatus.OK);
+        if (result.equals("REGISTRAZIONE MOVIMENTO EFFETTUATA")) {
+        	log.info(result);
+            return new ResponseEntity<>(result, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
         }
