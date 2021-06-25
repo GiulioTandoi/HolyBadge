@@ -74,13 +74,17 @@ public class MeetingService {
 
             List <Parishioner> parishionersList = parishionerRepository.getAllMeetingPartecipants(idMeeting);
 
-            Partecipation partecipation ;
+            Partecipation partecipation;
             PartecipantPojo partecipantPojo;
             for (Parishioner parishioner: parishionersList){
+            	logger.info("RECUPERO PARTECIPANTE");
+            	logger.info("ID PARISHIONER " + parishioner.getId() + " ID MEETING " + idMeeting);
                 partecipation = partecipationRepository.findByIdParishionerAndIdMeeting(parishioner.getId(), idMeeting);
                 partecipantPojo = new PartecipantPojo(parishioner, idMeeting, partecipation.getPartecipated());
                 partecipants.add(partecipantPojo);
             }
+            
+            logger.info("LUNGHEZZA PARTECIPANTI " + partecipants.size() + " : " + partecipants.toString());
 
         } catch (Exception ex) {
             logger.error("ERRORE DURANTE IL RECUPERO DEI PARTECIPANTI ALL'INCONTRO " + idMeeting, ex);
@@ -124,6 +128,7 @@ public class MeetingService {
 
         try {
             List<Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(groupName);
+            System.out.println("Parrocchiani del gruppo " + groupName + " : " + parishionersOfGroup.toString());
             List<Partecipation> partecipations = new ArrayList<>();
             Partecipation partecipation;
             for (Parishioner parishioner : parishionersOfGroup) {
@@ -132,7 +137,7 @@ public class MeetingService {
                 partecipation.setIdParishioner(parishioner.getId());
                 partecipations.add(partecipation);
             }
-
+            
             return partecipationRepository.saveAll(partecipations) != null;
         } catch (Exception ex) {
             logger.error("ERRORE DURANTE L'AGGIUNTA DEL GRUPPO " + groupName + " al meeting " + idMeeting, ex);
@@ -269,7 +274,10 @@ public class MeetingService {
             partecipation = new Partecipation();
             partecipation.setIdParishioner(idParishioner);
             partecipation.setIdMeeting(idMeeting);
-            partecipationRepository.save(partecipation);
+            if (partecipationRepository.findByIdParishionerAndIdMeeting(idParishioner, idMeeting) != null){
+                partecipationRepository.save(partecipation);
+            }
+
 
         }catch (Exception ex) {
             logger.error("ERRORE DURANTE L'AGGIUNTA DEL PARROCCHIANO al meeting " + idMeeting, ex);
