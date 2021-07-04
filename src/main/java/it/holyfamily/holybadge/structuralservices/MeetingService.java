@@ -1,6 +1,7 @@
 package it.holyfamily.holybadge.structuralservices;
 
 import it.holyfamily.holybadge.database.repositories.*;
+
 import it.holyfamily.holybadge.entities.*;
 import it.holyfamily.holybadge.pojos.MeetingPojo;
 import it.holyfamily.holybadge.pojos.MembershipPojo;
@@ -129,16 +130,10 @@ public class MeetingService {
         try {
             List<Parishioner> parishionersOfGroup = parishionerRepository.getAllGroupMembers(groupName);
             System.out.println("Parrocchiani del gruppo " + groupName + " : " + parishionersOfGroup.toString());
-            List<Partecipation> partecipations = new ArrayList<>();
-            Partecipation partecipation;
             for (Parishioner parishioner : parishionersOfGroup) {
-                partecipation = new Partecipation();
-                partecipation.setIdMeeting(idMeeting);
-                partecipation.setIdParishioner(parishioner.getId());
-                partecipations.add(partecipation);
+        	   addSingleParishionerToMeeting(parishioner.getId(), idMeeting);
             }
-            
-            return partecipationRepository.saveAll(partecipations) != null;
+            return true;
         } catch (Exception ex) {
             logger.error("ERRORE DURANTE L'AGGIUNTA DEL GRUPPO " + groupName + " al meeting " + idMeeting, ex);
             return false;
@@ -265,6 +260,7 @@ public class MeetingService {
         }
         return possibleMeetings;
 
+        
     }
 
     public boolean addSingleParishionerToMeeting(int idParishioner, int idMeeting) {
@@ -274,7 +270,7 @@ public class MeetingService {
             partecipation = new Partecipation();
             partecipation.setIdParishioner(idParishioner);
             partecipation.setIdMeeting(idMeeting);
-            if (partecipationRepository.findByIdParishionerAndIdMeeting(idParishioner, idMeeting) != null){
+            if (partecipationRepository.findByIdParishionerAndIdMeeting(idParishioner, idMeeting) == null){
                 partecipationRepository.save(partecipation);
             }
 
